@@ -15,6 +15,7 @@ extends Control
 @export var embark_label: Label
 @export var backdrop_container: SubViewportContainer
 @export var moving_backdrop: MovingBackdrop
+@export var message_queue: MessageQueue
 @export_group("")
 
 signal return_to_menu
@@ -26,7 +27,7 @@ const MILES := 60
 const RUN_SPEED := 5
 const FADE_DUR := 1.0
 enum Weather {
-	NONE = -1, CLEAR, RAIN, SNOW
+	NONE = -1, SUN, RAIN, SNOW
 }
 
 # Stats, which change when you get items
@@ -102,8 +103,18 @@ func _ready() -> void:
 	randomize_wallpaper()
 	Archipelago.connected.connect(on_connect)
 	Archipelago.remove_location.connect(refr_locs.unbind(1))
+	Archipelago.printjson.connect(printjson)
+	sun_button.pressed.connect(_on_embark.bind(Weather.SUN))
+	rain_button.pressed.connect(_on_embark.bind(Weather.RAIN))
+	snow_button.pressed.connect(_on_embark.bind(Weather.SNOW))
+
+func printjson(json: Dictionary, text: String) -> void:
+	if json.get("type") == "Tutorial" and "!help" in text:
+		return
+	message_queue.queue_message(BaseConsole.printjson_str(json["data"]))
 
 func on_connect(conn: ConnectionInfo, _json: Dictionary) -> void:
+	message_queue.queue_message("Click to instantly dismiss messages.")
 	conn.obtained_item.connect(item_get)
 	conn.refresh_items.connect(item_refr)
 	load_slot_data(conn)
@@ -231,7 +242,7 @@ func _physics_process(_delta: float) -> void:
 			paused = true
 			moving_backdrop.bk_mode = true
 			while not moving_backdrop.bk_building or (moving_backdrop.bk_building.position.x + moving_backdrop.bk_building.size.x / 2.0 > 320):
-				var limit: float = (moving_backdrop.bk_building.position.x + moving_backdrop.bk_building.size.x / 2.0 - 320) if moving_backdrop.bk_building else 320
+				var limit: float = (moving_backdrop.bk_building.position.x + moving_backdrop.bk_building.size.x / 2.0 - 320) if moving_backdrop.bk_building else 320.0
 				var dist := minf(limit, dx * 2)
 				moving_backdrop.move_by(dist)
 				await get_tree().physics_frame

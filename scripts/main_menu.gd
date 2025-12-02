@@ -21,6 +21,9 @@ func _ready() -> void:
 	active_menu = menu_main
 	Archipelago.connectionrefused.connect(connect_refused)
 	Archipelago.connected.connect(connected)
+	if OS.is_debug_build():
+		edit_ip.text = "localhost"
+		edit_slot.text = "Tester"
 
 func _on_exit_pressed() -> void:
 	get_tree().quit()

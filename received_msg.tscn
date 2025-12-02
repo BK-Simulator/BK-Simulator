@@ -1,0 +1,28 @@
+[gd_scene load_steps=3 format=3 uid="uid://dmoywvjuvjat0"]
+
+[ext_resource type="Script" uid="uid://dnu0bg4xqmikx" path="res://scripts/received_msg.gd" id="1_3xha4"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ltnbl"]
+content_margin_left = 8.0
+content_margin_top = 2.0
+content_margin_right = 8.0
+content_margin_bottom = 2.0
+bg_color = Color(0, 0, 0, 0.501961)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+
+[node name="PanelContainer" type="PanelContainer" node_paths=PackedStringArray("label")]
+custom_minimum_size = Vector2(200, 0)
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_ltnbl")
+script = ExtResource("1_3xha4")
+label = NodePath("Received")
+
+[node name="Received" type="Label" parent="."]
+layout_mode = 2
+text = "Got {} from {}"
+autowrap_mode = 3
+
+[connection signal="gui_input" from="." to="." method="_on_gui_input"]
