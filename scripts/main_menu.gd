@@ -44,3 +44,6 @@ func connect_refused(_conn: ConnectionInfo, json: Dictionary) -> void:
 
 func connected(_conn: ConnectionInfo, _json: Dictionary) -> void:
 	error_label.text = ""
+
+func become_visible() -> void:
+	$Wallpaper.random()

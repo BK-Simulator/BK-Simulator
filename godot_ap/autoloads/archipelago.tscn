@@ -17,7 +17,7 @@ build = 0
 
 [node name="AP" type="Node"]
 script = ExtResource("1_41ph8")
-AP_GAME_TAGS = Array[String](["HintGame"])
+AP_GAME_NAME = "BKSimulator"
 AP_CLIENT_VERSION = SubResource("Resource_pmgvy")
 AP_VERSION = SubResource("Resource_m1v20")
 

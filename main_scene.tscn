@@ -252,7 +252,7 @@ text = "Damn... BK'd again.
 Guess it's time to grab lunch."
 horizontal_alignment = 1
 
-[node name="Game" type="Control" parent="." node_paths=PackedStringArray("runwalk_label", "speed_label", "rain_label", "snow_label", "distance_label", "sun_button", "rain_button", "snow_button", "buttons", "progress", "progress_label")]
+[node name="Game" type="Control" parent="." node_paths=PackedStringArray("runwalk_label", "speed_label", "rain_label", "snow_label", "distance_label", "sun_button", "rain_button", "snow_button", "buttons", "progress", "progress_label", "embark_label")]
 texture_filter = 2
 layout_mode = 2
 script = ExtResource("13_mo76n")
@@ -267,6 +267,7 @@ snow_button = NodePath("Buttons/VBoxContainer/Snowy")
 buttons = NodePath("Buttons")
 progress = NodePath("Progress")
 progress_label = NodePath("Progress/HBoxContainer/Label2")
+embark_label = NodePath("Buttons/VBoxContainer/EmbarkLabel")
 
 [node name="Backdrop" type="SubViewportContainer" parent="Game"]
 texture_filter = 1
@@ -279,7 +280,9 @@ grow_vertical = 2
 stretch = true
 
 [node name="SubViewport" type="SubViewport" parent="Game/Backdrop"]
+handle_input_locally = false
 size = Vector2i(640, 360)
+render_target_update_mode = 4
 
 [node name="MarginContainer" type="MarginContainer" parent="Game"]
 layout_mode = 1
@@ -354,7 +357,7 @@ theme_override_constants/margin_top = 8
 [node name="VBoxContainer" type="VBoxContainer" parent="Game/Buttons"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="Game/Buttons/VBoxContainer"]
+[node name="EmbarkLabel" type="Label" parent="Game/Buttons/VBoxContainer"]
 layout_mode = 2
 text = "Embark:"
 horizontal_alignment = 1
@@ -403,6 +406,8 @@ horizontal_alignment = 1
 [connection signal="text_submitted" from="Menu (Home)/Control/CenterContainer/MarginContainer/Menu_Connect/ConnectBox/Password" to="Menu (Home)" method="_on_connect_pressed" unbinds=1]
 [connection signal="pressed" from="Menu (Home)/Control/CenterContainer/MarginContainer/Menu_Connect/ConnectBox/VBoxContainer/Connect" to="Menu (Home)" method="_on_connect_pressed"]
 [connection signal="pressed" from="Menu (Home)/Control/CenterContainer/MarginContainer/Menu_Connect/ConnectBox/VBoxContainer/Back" to="Menu (Home)" method="_on_back_pressed"]
+[connection signal="open_game" from="Game" to="." method="fade_to_game"]
+[connection signal="play_opening" from="Game" to="." method="fade_to_opening"]
 [connection signal="return_to_menu" from="Game" to="." method="_on_back_to_menu_pressed"]
 [connection signal="pressed" from="Game/BackToMenu" to="Game" method="_on_back_to_menu_pressed"]
 [connection signal="pressed" from="Game/Buttons/VBoxContainer/Sunny" to="Game" method="_on_embark" binds= [0]]
