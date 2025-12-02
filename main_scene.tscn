@@ -230,6 +230,7 @@ layout_mode = 2
 text = "Back"
 
 [node name="OpeningScene" type="Control" parent="." node_paths=PackedStringArray("lbl")]
+visible = false
 layout_mode = 2
 script = ExtResource("12_671wp")
 lbl = NodePath("Label")
@@ -251,9 +252,75 @@ text = "Damn... BK'd again.
 Guess it's time to grab lunch."
 horizontal_alignment = 1
 
-[node name="Game" type="Control" parent="."]
+[node name="Game" type="Control" parent="." node_paths=PackedStringArray("runwalk_label", "speed_label", "rain_label", "snow_label", "distance_label")]
+texture_filter = 2
 layout_mode = 2
 script = ExtResource("13_mo76n")
+runwalk_label = NodePath("MarginContainer/Stats/WalkRun")
+speed_label = NodePath("MarginContainer/Stats/Speed")
+rain_label = NodePath("MarginContainer/Stats/RainSpeed")
+snow_label = NodePath("MarginContainer/Stats/SnowSpeed")
+distance_label = NodePath("MarginContainer/Stats/Distance")
+
+[node name="Backdrop" type="SubViewportContainer" parent="Game"]
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+stretch = true
+
+[node name="SubViewport" type="SubViewport" parent="Game/Backdrop"]
+size = Vector2i(640, 360)
+
+[node name="MarginContainer" type="MarginContainer" parent="Game"]
+layout_mode = 1
+offset_right = 144.0
+offset_bottom = 116.0
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 12
+
+[node name="Stats" type="GridContainer" parent="Game/MarginContainer"]
+layout_mode = 2
+columns = 2
+
+[node name="WalkRun" type="Label" parent="Game/MarginContainer/Stats"]
+layout_mode = 2
+text = "Run Speed:"
+horizontal_alignment = 2
+
+[node name="Speed" type="Label" parent="Game/MarginContainer/Stats"]
+layout_mode = 2
+text = "0"
+
+[node name="Label" type="Label" parent="Game/MarginContainer/Stats"]
+layout_mode = 2
+text = "Rain Speed:"
+horizontal_alignment = 2
+
+[node name="RainSpeed" type="Label" parent="Game/MarginContainer/Stats"]
+layout_mode = 2
+text = "0"
+
+[node name="Label2" type="Label" parent="Game/MarginContainer/Stats"]
+layout_mode = 2
+text = "Snow Speed:"
+horizontal_alignment = 2
+
+[node name="SnowSpeed" type="Label" parent="Game/MarginContainer/Stats"]
+layout_mode = 2
+text = "0"
+
+[node name="Label3" type="Label" parent="Game/MarginContainer/Stats"]
+layout_mode = 2
+text = "Distance:"
+horizontal_alignment = 2
+
+[node name="Distance" type="Label" parent="Game/MarginContainer/Stats"]
+layout_mode = 2
+text = "0"
 
 [node name="BackToMenu" type="Button" parent="Game"]
 texture_filter = 2
@@ -275,4 +342,5 @@ text = " Exit "
 [connection signal="text_submitted" from="Menu (Home)/Control/CenterContainer/MarginContainer/Menu_Connect/ConnectBox/Password" to="Menu (Home)" method="_on_connect_pressed" unbinds=1]
 [connection signal="pressed" from="Menu (Home)/Control/CenterContainer/MarginContainer/Menu_Connect/ConnectBox/VBoxContainer/Connect" to="Menu (Home)" method="_on_connect_pressed"]
 [connection signal="pressed" from="Menu (Home)/Control/CenterContainer/MarginContainer/Menu_Connect/ConnectBox/VBoxContainer/Back" to="Menu (Home)" method="_on_back_pressed"]
-[connection signal="pressed" from="Game/BackToMenu" to="." method="_on_back_to_menu_pressed"]
+[connection signal="return_to_menu" from="Game" to="." method="_on_back_to_menu_pressed"]
+[connection signal="pressed" from="Game/BackToMenu" to="Game" method="_on_back_to_menu_pressed"]
