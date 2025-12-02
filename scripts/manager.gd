@@ -33,7 +33,6 @@ func fade_to_opening() -> void:
 	tw.parallel().tween_property(game, "modulate:a", 1.0, FADE_DUR)
 	await tw.finished
 	opening_scene.set_visible(false)
-	game.activate()
 
 func fade_to_menu() -> void:
 	var tw := create_tween()

@@ -252,7 +252,7 @@ text = "Damn... BK'd again.
 Guess it's time to grab lunch."
 horizontal_alignment = 1
 
-[node name="Game" type="Control" parent="." node_paths=PackedStringArray("runwalk_label", "speed_label", "rain_label", "snow_label", "distance_label")]
+[node name="Game" type="Control" parent="." node_paths=PackedStringArray("runwalk_label", "speed_label", "rain_label", "snow_label", "distance_label", "sun_button", "rain_button", "snow_button", "buttons", "progress", "progress_label")]
 texture_filter = 2
 layout_mode = 2
 script = ExtResource("13_mo76n")
@@ -261,6 +261,12 @@ speed_label = NodePath("MarginContainer/Stats/Speed")
 rain_label = NodePath("MarginContainer/Stats/RainSpeed")
 snow_label = NodePath("MarginContainer/Stats/SnowSpeed")
 distance_label = NodePath("MarginContainer/Stats/Distance")
+sun_button = NodePath("Buttons/VBoxContainer/Sunny")
+rain_button = NodePath("Buttons/VBoxContainer/Rainy")
+snow_button = NodePath("Buttons/VBoxContainer/Snowy")
+buttons = NodePath("Buttons")
+progress = NodePath("Progress")
+progress_label = NodePath("Progress/HBoxContainer/Label2")
 
 [node name="Backdrop" type="SubViewportContainer" parent="Game"]
 texture_filter = 1
@@ -334,6 +340,61 @@ grow_horizontal = 0
 theme_override_font_sizes/font_size = 16
 text = " Exit "
 
+[node name="Buttons" type="MarginContainer" parent="Game"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -20.0
+offset_right = 20.0
+offset_bottom = 40.0
+grow_horizontal = 2
+theme_override_constants/margin_top = 8
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Game/Buttons"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Game/Buttons/VBoxContainer"]
+layout_mode = 2
+text = "Embark:"
+horizontal_alignment = 1
+
+[node name="Sunny" type="Button" parent="Game/Buttons/VBoxContainer"]
+layout_mode = 2
+text = "Sunny Weather"
+
+[node name="Rainy" type="Button" parent="Game/Buttons/VBoxContainer"]
+layout_mode = 2
+text = "Rainy Weather"
+
+[node name="Snowy" type="Button" parent="Game/Buttons/VBoxContainer"]
+layout_mode = 2
+text = "Snowy Weather"
+
+[node name="Progress" type="MarginContainer" parent="Game"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -40.5
+offset_right = 40.5
+offset_bottom = 23.0
+grow_horizontal = 2
+theme_override_constants/margin_top = 8
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Game/Progress"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Game/Progress/HBoxContainer"]
+layout_mode = 2
+text = "Position:"
+horizontal_alignment = 1
+
+[node name="Label2" type="Label" parent="Game/Progress/HBoxContainer"]
+layout_mode = 2
+text = "0"
+horizontal_alignment = 1
+
 [connection signal="pressed" from="Menu (Home)/Control/CenterContainer/MarginContainer/Menu_Main/ButtonBox/Start" to="Menu (Home)" method="_on_start_pressed"]
 [connection signal="pressed" from="Menu (Home)/Control/CenterContainer/MarginContainer/Menu_Main/ButtonBox/Exit" to="Menu (Home)" method="_on_exit_pressed"]
 [connection signal="text_submitted" from="Menu (Home)/Control/CenterContainer/MarginContainer/Menu_Connect/ConnectBox/IP" to="Menu (Home)" method="_on_connect_pressed" unbinds=1]
@@ -344,3 +405,6 @@ text = " Exit "
 [connection signal="pressed" from="Menu (Home)/Control/CenterContainer/MarginContainer/Menu_Connect/ConnectBox/VBoxContainer/Back" to="Menu (Home)" method="_on_back_pressed"]
 [connection signal="return_to_menu" from="Game" to="." method="_on_back_to_menu_pressed"]
 [connection signal="pressed" from="Game/BackToMenu" to="Game" method="_on_back_to_menu_pressed"]
+[connection signal="pressed" from="Game/Buttons/VBoxContainer/Sunny" to="Game" method="_on_embark" binds= [0]]
+[connection signal="pressed" from="Game/Buttons/VBoxContainer/Rainy" to="Game" method="_on_embark" binds= [1]]
+[connection signal="pressed" from="Game/Buttons/VBoxContainer/Snowy" to="Game" method="_on_embark" binds= [2]]

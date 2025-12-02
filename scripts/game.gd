@@ -6,6 +6,12 @@ extends Control
 @export var rain_label: Label
 @export var snow_label: Label
 @export var distance_label: Label
+@export var sun_button: Button
+@export var rain_button: Button
+@export var snow_button: Button
+@export var buttons: MarginContainer
+@export var progress: MarginContainer
+@export var progress_label: Label
 @export_group("")
 
 signal return_to_menu
@@ -25,20 +31,24 @@ var locs_per_weather: int
 var bk_start_miles: int
 var speed_per_upgrade: int
 # other
-var current_position: int
+var current_position: int :
+	set(val):
+		current_position = val
+		progress_label.text = str(current_position)
 var current_weather: Weather
+var direction: int = 1
 var connected_key: String
+var in_focus: bool = false
 
 func reset_item() -> void:
 	run_speed = 1
 	snow_speed = 0
 	bk_position = bk_start_miles * MILES
+	snow_button.disabled = true
 func load_slot_data(conn: ConnectionInfo) -> void:
 	locs_per_weather = conn.slot_data["LocsPerWeather"]
 	bk_start_miles = conn.slot_data["StartMiles"]
-
-func activate() -> void:
-	refresh()
+	speed_per_upgrade = conn.slot_data["SpeedPerUpgrade"]
 
 func refresh() -> void:
 	runwalk_label.text = "%s Speed:" % ("Walk" if run_speed < RUN_SPEED else "Run")
@@ -47,8 +57,29 @@ func refresh() -> void:
 	snow_label.text = str(snow_speed)
 	distance_label.text = str(bk_position / float(MILES))
 
+func get_speed() -> int:
+	if current_weather == Weather.SNOW:
+		return snow_speed
+	if current_weather == Weather.RAIN:
+		return run_speed / 2.0
+	return run_speed
+
+func refr_locs() -> void:
+	sun_button.set_visible(false)
+	rain_button.set_visible(false)
+	snow_button.set_visible(false)
+	for key in Archipelago.conn.slot_locations:
+		if not Archipelago.conn.slot_locations[key]:
+			if key < 100:
+				sun_button.set_visible(true)
+			elif key < 200:
+				rain_button.set_visible(true)
+			elif key < 300:
+				snow_button.set_visible(true)
+
 func _ready() -> void:
 	Archipelago.connected.connect(on_connect)
+	Archipelago.remove_location.connect(refr_locs.unbind(1))
 
 func on_connect(conn: ConnectionInfo, _json: Dictionary) -> void:
 	conn.obtained_item.connect(item_get)
@@ -59,12 +90,22 @@ func on_connect(conn: ConnectionInfo, _json: Dictionary) -> void:
 	current_weather = Weather.NONE
 	connected_key = "BK_Simulator_%d" % conn.player_id
 	conn.retrieve(connected_key, resume_from_server)
+	refresh()
+	refr_locs()
+	in_focus = get_window().has_focus()
+	init_backdrop()
 
 func item_get(item: NetworkItem) -> void:
 	var iname: String = item.get_name()
 	match iname.to_upper():
 		"BETTER SHOES":
 			run_speed += speed_per_upgrade
+		"SNOW SHOES":
+			snow_speed += speed_per_upgrade
+			snow_button.disabled = false
+		"NEW LOCATION":
+			bk_position /= 2
+	refresh()
 
 func item_refr(items: Array[NetworkItem]) -> void:
 	reset_item()
@@ -80,6 +121,8 @@ func resume_from_server(data: Variant) -> void:
 		if data.is_empty(): return
 		current_position = data["pos"]
 		current_weather = data["weather"] as Weather
+		direction = data["dir"]
+		init_backdrop()
 
 func save_to_server() -> void:
 	Archipelago.send_command("Set", {
@@ -90,6 +133,7 @@ func save_to_server() -> void:
 			{"operation": "replace", "value": {
 				"pos": current_position,
 				"weather": current_weather as int,
+				"dir": direction,
 			}}
 		]
 	})
@@ -97,3 +141,47 @@ func save_to_server() -> void:
 func _on_back_to_menu_pressed() -> void:
 	save_to_server()
 	return_to_menu.emit()
+
+func _on_embark(weather: int) -> void:
+	if current_weather == Weather.NONE:
+		current_weather = weather as Weather
+		current_position = 0
+		init_backdrop()
+
+func init_backdrop() -> void:
+	buttons.set_visible(current_weather == Weather.NONE)
+	progress.set_visible(current_weather != Weather.NONE)
+	# TODO: Set up backdrop generation
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_APPLICATION_FOCUS_IN:
+		in_focus = true
+	elif what == NOTIFICATION_APPLICATION_FOCUS_OUT:
+		in_focus = false
+
+func _physics_process(_delta: float) -> void:
+	if not in_focus: return
+	if current_weather == Weather.NONE: return
+	if current_position < 0: return
+	current_position += get_speed() * direction
+	if direction > 0:
+		if current_position >= bk_position:
+			for loc in range(current_weather as int, current_weather as int + locs_per_weather):
+				if not Archipelago.conn.slot_locations[loc]:
+					Archipelago.collect_location(loc)
+					break
+			# TODO: Reach BK animation
+			direction = -1
+		else:
+			# TODO: Move the backdrop in some way
+			pass
+	else:
+		if current_position <= 0:
+			# TODO: Reach home
+			current_position = -1
+			current_weather = Weather.NONE
+			direction = 1
+			init_backdrop()
+		else:
+			# TODO: Move the backdrop in some way
+			pass
