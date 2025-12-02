@@ -19,6 +19,7 @@ extends Control
 
 signal return_to_menu
 signal play_opening
+signal play_ending
 signal open_game
 
 const MILES := 60
@@ -111,6 +112,7 @@ func on_connect(conn: ConnectionInfo, _json: Dictionary) -> void:
 	current_weather = Weather.NONE
 	connected_key = "BK_Simulator_%d" % conn.player_id
 	conn.retrieve(connected_key, resume_from_server)
+	conn.force_scout_all()
 	refresh()
 	refr_locs()
 	in_focus = get_window().has_focus()
@@ -152,7 +154,7 @@ func resume_from_server(data: Variant) -> void:
 		if data.is_empty(): return
 		current_position = data["pos"]
 		current_weather = data["weather"] as Weather
-		direction = data["dir"]
+		set_direction(data["dir"])
 		randomize_wallpaper()
 		init_backdrop(true)
 		if current_weather == Weather.NONE and remaining_locations > 0:
@@ -183,7 +185,7 @@ func _on_embark(weather: int) -> void:
 	if current_weather == Weather.NONE:
 		current_weather = weather as Weather
 		current_position = 0
-		direction = 1
+		set_direction(1)
 		init_backdrop()
 
 func init_backdrop(instant := false) -> void:
@@ -226,7 +228,15 @@ func _physics_process(_delta: float) -> void:
 				if not Archipelago.conn.slot_locations[loc]:
 					Archipelago.collect_location(loc)
 					break
-			# TODO: Reach BK animation
+			paused = true
+			moving_backdrop.bk_mode = true
+			while not moving_backdrop.bk_building or (moving_backdrop.bk_building.position.x + moving_backdrop.bk_building.size.x / 2.0 > 320):
+				var limit: float = (moving_backdrop.bk_building.position.x + moving_backdrop.bk_building.size.x / 2.0 - 320) if moving_backdrop.bk_building else 320
+				var dist := minf(limit, dx * 2)
+				moving_backdrop.move_by(dist)
+				await get_tree().physics_frame
+			# TODO Popup for what you got
+			paused = false
 			set_direction(-1)
 		else:
 			moving_backdrop.move_by(dx)
@@ -234,8 +244,8 @@ func _physics_process(_delta: float) -> void:
 		if current_position <= 0:
 			current_position = 0
 			if not in_focus: return
-			# TODO: Reach home
 			if remaining_locations == 0:
+				play_ending.emit()
 				Archipelago.set_client_status(AP.ClientStatus.CLIENT_GOAL)
 			current_weather = Weather.NONE
 			set_direction(1)
