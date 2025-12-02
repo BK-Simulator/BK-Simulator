@@ -19,6 +19,7 @@ func queue_message(text: String) -> void:
 	queue_vbox.move_child(msg, 0)
 	msg.tree_exited.connect(queue_refresh)
 	msg.tree_entered.connect(queue_refresh)
+	queue_refresh()
 
 func _process(_delta: float) -> void:
 	if dirty:

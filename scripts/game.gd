@@ -111,7 +111,7 @@ func _ready() -> void:
 func printjson(json: Dictionary, text: String) -> void:
 	if json.get("type") == "Tutorial" and "!help" in text:
 		return
-	message_queue.queue_message(BaseConsole.printjson_str(json["data"]))
+	message_queue.queue_message(BaseConsole.printjson_out_str(json["data"]))
 
 func on_connect(conn: ConnectionInfo, _json: Dictionary) -> void:
 	message_queue.queue_message("Click to instantly dismiss messages.")
@@ -223,7 +223,7 @@ func _notification(what: int) -> void:
 		in_focus = false
 
 func _physics_process(_delta: float) -> void:
-	#if not in_focus: return
+	if not in_focus: return
 	if paused: return
 	if current_weather == Weather.NONE: return
 	var dx := get_speed() * direction
@@ -233,7 +233,7 @@ func _physics_process(_delta: float) -> void:
 	if direction > 0:
 		if current_position >= bk_position:
 			current_position = bk_position
-			if not in_focus: return
+			#if not in_focus: return
 			var start_key := (current_weather as int) * 100 + 1
 			for loc in range(start_key, start_key + locs_per_weather):
 				if not Archipelago.conn.slot_locations[loc]:
@@ -254,7 +254,7 @@ func _physics_process(_delta: float) -> void:
 	else:
 		if current_position <= 0:
 			current_position = 0
-			if not in_focus: return
+			#if not in_focus: return
 			if remaining_locations == 0:
 				play_ending.emit()
 				Archipelago.set_client_status(AP.ClientStatus.CLIENT_GOAL)
