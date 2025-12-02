@@ -1,15 +1,8 @@
-[gd_scene load_steps=18 format=3 uid="uid://c3dc0h14m5kem"]
+[gd_scene load_steps=10 format=3 uid="uid://c3dc0h14m5kem"]
 
-[ext_resource type="Texture2D" uid="uid://d0x16vpyc5o6w" path="res://graphics/basic_wallpaper.png" id="1_0f027"]
-[ext_resource type="Shader" uid="uid://4vc34c20vj8l" path="res://shaders/recolor_hue.gdshader" id="1_2c62f"]
 [ext_resource type="Script" uid="uid://clt6f0826b4em" path="res://scripts/main_menu.gd" id="1_7ycvg"]
 [ext_resource type="Script" uid="uid://xtkcht8bmaja" path="res://scripts/manager.gd" id="1_qwutr"]
-[ext_resource type="Script" uid="uid://cljxqsxnniah6" path="res://scripts/wallpaper.gd" id="3_d5x1h"]
-[ext_resource type="Texture2D" uid="uid://dmf6txqmnxgfe" path="res://graphics/basic_flooring.png" id="3_gyfs4"]
-[ext_resource type="Texture2D" uid="uid://i17vaae5fd4g" path="res://graphics/basic_desk.png" id="5_8mm7a"]
-[ext_resource type="Texture2D" uid="uid://dv84sxfafkjot" path="res://graphics/basic_pc.png" id="6_hq1ik"]
-[ext_resource type="Texture2D" uid="uid://dq08vnalibrd0" path="res://graphics/basic_chair.png" id="7_nfk4m"]
-[ext_resource type="Texture2D" uid="uid://dcrvvlayola0l" path="res://graphics/basic_window.png" id="8_66tet"]
+[ext_resource type="PackedScene" uid="uid://ciysvlcp7d35f" path="res://background.tscn" id="3_hq1ik"]
 [ext_resource type="Theme" uid="uid://bk5d04iu41rhp" path="res://theme.tres" id="10_wr18j"]
 [ext_resource type="Script" uid="uid://bh60v6cp737gm" path="res://scripts/opening_scene.gd" id="12_671wp"]
 [ext_resource type="Script" uid="uid://deugr1n12t31u" path="res://scripts/game.gd" id="13_mo76n"]
@@ -27,9 +20,6 @@ border_width_bottom = 1
 border_color = Color(0.1045, 0.131575, 0.19, 1)
 border_blend = true
 corner_detail = 5
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_gyfs4"]
-shader = ExtResource("1_2c62f")
 
 [sub_resource type="LabelSettings" id="LabelSettings_nfk4m"]
 font_size = 30
@@ -60,6 +50,9 @@ main_menu = NodePath("Menu (Home)")
 opening_scene = NodePath("OpeningScene")
 game = NodePath("Game")
 
+[node name="Background" parent="." instance=ExtResource("3_hq1ik")]
+layout_mode = 2
+
 [node name="Menu (Home)" type="MarginContainer" parent="." node_paths=PackedStringArray("menu_main", "menu_connect", "edit_ip", "edit_port", "edit_slot", "edit_pwd", "error_label")]
 visible = false
 layout_mode = 2
@@ -71,33 +64,6 @@ edit_port = NodePath("Control/CenterContainer/MarginContainer/Menu_Connect/Conne
 edit_slot = NodePath("Control/CenterContainer/MarginContainer/Menu_Connect/ConnectBox/Slot")
 edit_pwd = NodePath("Control/CenterContainer/MarginContainer/Menu_Connect/ConnectBox/Password")
 error_label = NodePath("Control/CenterContainer/MarginContainer/Menu_Connect/ConnectBox/VBoxContainer/Label")
-
-[node name="Wallpaper" type="TextureRect" parent="Menu (Home)"]
-material = SubResource("ShaderMaterial_gyfs4")
-instance_shader_parameters/tint_color = Color(0.913, 0.91, 1, 1)
-layout_mode = 2
-texture = ExtResource("1_0f027")
-script = ExtResource("3_d5x1h")
-
-[node name="Flooring" type="TextureRect" parent="Menu (Home)"]
-layout_mode = 2
-texture = ExtResource("3_gyfs4")
-
-[node name="Desk" type="TextureRect" parent="Menu (Home)"]
-layout_mode = 2
-texture = ExtResource("5_8mm7a")
-
-[node name="PC" type="TextureRect" parent="Menu (Home)"]
-layout_mode = 2
-texture = ExtResource("6_hq1ik")
-
-[node name="Chair" type="TextureRect" parent="Menu (Home)"]
-layout_mode = 2
-texture = ExtResource("7_nfk4m")
-
-[node name="Window" type="TextureRect" parent="Menu (Home)"]
-layout_mode = 2
-texture = ExtResource("8_66tet")
 
 [node name="Control" type="Control" parent="Menu (Home)"]
 texture_filter = 2
@@ -252,7 +218,7 @@ text = "Damn... BK'd again.
 Guess it's time to grab lunch."
 horizontal_alignment = 1
 
-[node name="Game" type="Control" parent="." node_paths=PackedStringArray("runwalk_label", "speed_label", "rain_label", "snow_label", "distance_label", "sun_button", "rain_button", "snow_button", "buttons", "progress", "progress_label", "embark_label")]
+[node name="Game" type="Control" parent="." node_paths=PackedStringArray("runwalk_label", "speed_label", "rain_label", "snow_label", "distance_label", "sun_button", "rain_button", "snow_button", "buttons", "progress", "progress_label", "embark_label", "moving_backdrop")]
 texture_filter = 2
 layout_mode = 2
 script = ExtResource("13_mo76n")
@@ -268,8 +234,10 @@ buttons = NodePath("Buttons")
 progress = NodePath("Progress")
 progress_label = NodePath("Progress/HBoxContainer/Label2")
 embark_label = NodePath("Buttons/VBoxContainer/EmbarkLabel")
+moving_backdrop = NodePath("Backdrop")
 
 [node name="Backdrop" type="SubViewportContainer" parent="Game"]
+visible = false
 texture_filter = 1
 layout_mode = 1
 anchors_preset = 15
@@ -282,14 +250,19 @@ stretch = true
 [node name="SubViewport" type="SubViewport" parent="Game/Backdrop"]
 handle_input_locally = false
 size = Vector2i(640, 360)
-render_target_update_mode = 4
+render_target_update_mode = 0
 
 [node name="MarginContainer" type="MarginContainer" parent="Game"]
 layout_mode = 1
-offset_right = 144.0
-offset_bottom = 116.0
-theme_override_constants/margin_left = 12
-theme_override_constants/margin_top = 12
+anchors_preset = 11
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -122.0
+grow_horizontal = 0
+grow_vertical = 2
+theme_override_constants/margin_top = 32
+theme_override_constants/margin_right = 10
 
 [node name="Stats" type="GridContainer" parent="Game/MarginContainer"]
 layout_mode = 2
@@ -302,7 +275,7 @@ horizontal_alignment = 2
 
 [node name="Speed" type="Label" parent="Game/MarginContainer/Stats"]
 layout_mode = 2
-text = "0"
+text = "100.0"
 
 [node name="Label" type="Label" parent="Game/MarginContainer/Stats"]
 layout_mode = 2
@@ -311,7 +284,7 @@ horizontal_alignment = 2
 
 [node name="RainSpeed" type="Label" parent="Game/MarginContainer/Stats"]
 layout_mode = 2
-text = "0"
+text = "100.0"
 
 [node name="Label2" type="Label" parent="Game/MarginContainer/Stats"]
 layout_mode = 2
@@ -320,7 +293,7 @@ horizontal_alignment = 2
 
 [node name="SnowSpeed" type="Label" parent="Game/MarginContainer/Stats"]
 layout_mode = 2
-text = "0"
+text = "100.0"
 
 [node name="Label3" type="Label" parent="Game/MarginContainer/Stats"]
 layout_mode = 2
@@ -329,7 +302,7 @@ horizontal_alignment = 2
 
 [node name="Distance" type="Label" parent="Game/MarginContainer/Stats"]
 layout_mode = 2
-text = "0"
+text = "5000"
 
 [node name="BackToMenu" type="Button" parent="Game"]
 texture_filter = 2

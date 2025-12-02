@@ -52,13 +52,13 @@ func fade_to_game() -> void:
 func fade_to_menu() -> void:
 	if in_transition: return
 	in_transition = true
+	main_menu.modulate.a = 0.0
+	main_menu.set_visible(true)
 	var tw := create_tween()
 	tw.tween_property(game, "modulate:a", 0.0, FADE_DUR)
-	tw.tween_callback(main_menu.set_visible.bind(true))
+	tw.parallel().tween_property(main_menu, "modulate:a", 1.0, FADE_DUR)
 	tw.tween_callback(game.set_visible.bind(false))
-	tw.tween_property(main_menu, "modulate:a", 1.0, FADE_DUR)
 	await tw.finished
-	main_menu.become_visible()
 	in_transition = false
 	transition_end.emit()
 

@@ -13,6 +13,7 @@ extends Control
 @export var progress: MarginContainer
 @export var progress_label: Label
 @export var embark_label: Label
+@export var moving_backdrop: SubViewportContainer
 @export_group("")
 
 signal return_to_menu
@@ -21,6 +22,7 @@ signal open_game
 
 const MILES := 60
 const RUN_SPEED := 5
+const FADE_DUR := 1.0
 enum Weather {
 	NONE = -1, CLEAR, RAIN, SNOW
 }
@@ -50,6 +52,7 @@ func reset_item() -> void:
 	snow_speed = 0
 	bk_position = bk_start_miles * MILES
 	snow_button.disabled = true
+	snow_button.focus_mode = FOCUS_NONE
 func load_slot_data(conn: ConnectionInfo) -> void:
 	locs_per_weather = conn.slot_data["LocsPerWeather"]
 	bk_start_miles = conn.slot_data["StartDistance"]
@@ -60,7 +63,7 @@ func refresh() -> void:
 	speed_label.text = str(run_speed)
 	rain_label.text = str(run_speed / 2.0)
 	snow_label.text = str(snow_speed)
-	distance_label.text = str(bk_position / float(MILES))
+	distance_label.text = str(roundi(bk_position / float(MILES)))
 
 func get_speed() -> float:
 	if current_weather == Weather.SNOW:
@@ -94,6 +97,7 @@ func refr_locs() -> void:
 	embark_label.text = "Embark:" if remaining_locations else "GOAL COMPLETE!"
 
 func _ready() -> void:
+	randomize_wallpaper()
 	Archipelago.connected.connect(on_connect)
 	Archipelago.remove_location.connect(refr_locs.unbind(1))
 
@@ -109,7 +113,6 @@ func on_connect(conn: ConnectionInfo, _json: Dictionary) -> void:
 	refresh()
 	refr_locs()
 	in_focus = get_window().has_focus()
-	init_backdrop()
 	paused = false
 
 func item_get(item: NetworkItem) -> void:
@@ -120,6 +123,7 @@ func item_get(item: NetworkItem) -> void:
 		"SNOW BOOTS":
 			snow_speed += speed_per_upgrade / 2.0
 			snow_button.disabled = false
+			snow_button.focus_mode = FOCUS_ALL
 		"NEW LOCATION":
 			bk_position /= 2
 	refresh()
@@ -133,13 +137,23 @@ func _exit_tree() -> void:
 	if Archipelago.is_ap_connected():
 		save_to_server()
 
+func randomize_wallpaper() -> void:
+	RenderingServer.global_shader_parameter_set_override(&"wallpaper_tint", Color.from_hsv(randf(), randf_range(0, 0.2) * randf_range(0.5, 1.0), 1.0))
+
 func resume_from_server(data: Variant) -> void:
+	if data == null:
+		data = {
+			"pos": 0,
+			"weather": Weather.NONE,
+			"dir": 1,
+		}
 	if data is Dictionary:
 		if data.is_empty(): return
 		current_position = data["pos"]
 		current_weather = data["weather"] as Weather
 		direction = data["dir"]
-		init_backdrop()
+		randomize_wallpaper()
+		init_backdrop(true)
 		if current_weather == Weather.NONE and remaining_locations > 0:
 			play_opening.emit()
 		else:
@@ -171,9 +185,17 @@ func _on_embark(weather: int) -> void:
 		direction = 1
 		init_backdrop()
 
-func init_backdrop() -> void:
-	buttons.set_visible(current_weather == Weather.NONE)
-	progress.set_visible(current_weather != Weather.NONE)
+func init_backdrop(instant := false) -> void:
+	var active := current_weather != Weather.NONE
+	buttons.set_visible(not active)
+	progress.set_visible(active)
+	moving_backdrop.set_visible(active)
+	if instant:
+		moving_backdrop.modulate.a = 1.0 if active else 0.0
+	else:
+		var tw := create_tween()
+		tw.tween_property(moving_backdrop, "modulate:a", 1.0 if active else 0.0, FADE_DUR)
+
 	# TODO: Set up backdrop generation
 
 func _notification(what: int) -> void:
@@ -187,6 +209,8 @@ func _physics_process(_delta: float) -> void:
 	if paused: return
 	if current_weather == Weather.NONE: return
 	current_position += get_speed() * direction
+	#current_position = bk_position - 1
+	#current_position = 0
 	if roundi(current_position) % 50 == 0:
 		save_to_server()
 	if direction > 0:

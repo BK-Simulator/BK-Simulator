@@ -1,0 +1,39 @@
+[gd_scene load_steps=9 format=3 uid="uid://ciysvlcp7d35f"]
+
+[ext_resource type="Shader" uid="uid://4vc34c20vj8l" path="res://shaders/recolor_hue.gdshader" id="1_vvxqx"]
+[ext_resource type="Texture2D" uid="uid://d0x16vpyc5o6w" path="res://graphics/basic_wallpaper.png" id="2_cdpnt"]
+[ext_resource type="Texture2D" uid="uid://dmf6txqmnxgfe" path="res://graphics/basic_flooring.png" id="4_6i7po"]
+[ext_resource type="Texture2D" uid="uid://i17vaae5fd4g" path="res://graphics/basic_desk.png" id="5_e8087"]
+[ext_resource type="Texture2D" uid="uid://dv84sxfafkjot" path="res://graphics/basic_pc.png" id="6_b3bg0"]
+[ext_resource type="Texture2D" uid="uid://dq08vnalibrd0" path="res://graphics/basic_chair.png" id="7_8umsc"]
+[ext_resource type="Texture2D" uid="uid://dcrvvlayola0l" path="res://graphics/basic_window.png" id="8_7kmkt"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_gyfs4"]
+shader = ExtResource("1_vvxqx")
+
+[node name="Background" type="MarginContainer"]
+
+[node name="Wallpaper" type="TextureRect" parent="."]
+material = SubResource("ShaderMaterial_gyfs4")
+layout_mode = 2
+texture = ExtResource("2_cdpnt")
+
+[node name="Flooring" type="TextureRect" parent="."]
+layout_mode = 2
+texture = ExtResource("4_6i7po")
+
+[node name="Desk" type="TextureRect" parent="."]
+layout_mode = 2
+texture = ExtResource("5_e8087")
+
+[node name="PC" type="TextureRect" parent="."]
+layout_mode = 2
+texture = ExtResource("6_b3bg0")
+
+[node name="Chair" type="TextureRect" parent="."]
+layout_mode = 2
+texture = ExtResource("7_8umsc")
+
+[node name="Window" type="TextureRect" parent="."]
+layout_mode = 2
+texture = ExtResource("8_7kmkt")

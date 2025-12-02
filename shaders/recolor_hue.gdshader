@@ -1,6 +1,6 @@
 shader_type canvas_item;
 
-instance uniform vec3 tint_color : source_color;
+global uniform vec3 wallpaper_tint : source_color;
 
 vec3 rgb2hsv(vec3 c) // from https://godotshaders.com/shader/color-range-swap/
 {
@@ -21,7 +21,7 @@ vec3 hsv2rgb(vec3 c) // from https://godotshaders.com/shader/color-range-swap/
 
 void fragment() {
 	vec3 c = rgb2hsv(COLOR.rgb);
-	vec3 tintc = rgb2hsv(tint_color);
+	vec3 tintc = rgb2hsv(wallpaper_tint);
 	c.xy = tintc.xy; // set hue and sat, leave value alone
 	COLOR.rgb = hsv2rgb(c);
 }
