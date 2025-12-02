@@ -13,7 +13,8 @@ extends Control
 @export var progress: MarginContainer
 @export var progress_label: Label
 @export var embark_label: Label
-@export var moving_backdrop: SubViewportContainer
+@export var backdrop_container: SubViewportContainer
+@export var moving_backdrop: MovingBackdrop
 @export_group("")
 
 signal return_to_menu
@@ -189,14 +190,18 @@ func init_backdrop(instant := false) -> void:
 	var active := current_weather != Weather.NONE
 	buttons.set_visible(not active)
 	progress.set_visible(active)
-	moving_backdrop.set_visible(active)
+	backdrop_container.set_visible(active)
+	if active:
+		moving_backdrop.populate_buildings()
 	if instant:
-		moving_backdrop.modulate.a = 1.0 if active else 0.0
+		backdrop_container.modulate.a = 1.0 if active else 0.0
+		paused = not active
 	else:
+		paused = true
 		var tw := create_tween()
-		tw.tween_property(moving_backdrop, "modulate:a", 1.0 if active else 0.0, FADE_DUR)
-
-	# TODO: Set up backdrop generation
+		tw.tween_property(backdrop_container, "modulate:a", 1.0 if active else 0.0, FADE_DUR)
+		if active:
+			tw.tween_callback(func(): paused = false)
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_APPLICATION_FOCUS_IN:
@@ -208,9 +213,8 @@ func _physics_process(_delta: float) -> void:
 	#if not in_focus: return
 	if paused: return
 	if current_weather == Weather.NONE: return
-	current_position += get_speed() * direction
-	#current_position = bk_position - 1
-	#current_position = 0
+	var dx := get_speed() * direction
+	current_position += dx
 	if roundi(current_position) % 50 == 0:
 		save_to_server()
 	if direction > 0:
@@ -223,10 +227,9 @@ func _physics_process(_delta: float) -> void:
 					Archipelago.collect_location(loc)
 					break
 			# TODO: Reach BK animation
-			direction = -1
+			set_direction(-1)
 		else:
-			# TODO: Move the backdrop in some way
-			pass
+			moving_backdrop.move_by(dx)
 	else:
 		if current_position <= 0:
 			current_position = 0
@@ -235,8 +238,13 @@ func _physics_process(_delta: float) -> void:
 			if remaining_locations == 0:
 				Archipelago.set_client_status(AP.ClientStatus.CLIENT_GOAL)
 			current_weather = Weather.NONE
-			direction = 1
+			set_direction(1)
 			init_backdrop()
 		else:
-			# TODO: Move the backdrop in some way
-			pass
+			moving_backdrop.move_by(dx)
+
+func set_direction(dir: int) -> void:
+	assert(dir == 1 or dir == -1)
+	if direction != dir:
+		direction = dir
+		moving_backdrop.swap_direction()
