@@ -45,7 +45,7 @@ func fade_to_ending(done: bool) -> void:
 	tw.tween_property(game, "modulate:a", 0.0, FADE_DUR)
 	await tw.finished
 	if done:
-		await text_scene.play("Oh, finally! %s sent me the item I was waiting for.\nNow I can keep playing Archipelago!" % end_names.pick_random(), 4.0, 10.0)
+		await text_scene.play("Oh, finally! '%s' sent me the item I was waiting for.\nNow I can keep playing Archipelago!" % pick_username(), 4.0, 10.0)
 	else:
 		await text_scene.play("Still in BK Mode...", 2.0, 2.0)
 	tw = create_tween()
@@ -88,3 +88,14 @@ func _on_back_to_menu_pressed() -> void:
 	randomize_wallpaper()
 	await fade_to_menu()
 	Archipelago.ap_disconnect()
+
+func pick_username() -> String:
+	var available_names: Array[String]
+	available_names.assign(end_names)
+
+	for player in Archipelago.conn.players:
+		if player.slot == Archipelago.conn.player_id:
+			continue
+		available_names.append(player.get_name())
+
+	return available_names.pick_random()
