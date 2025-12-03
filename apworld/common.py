@@ -11,4 +11,5 @@ class ITEM(StrEnum):
     SHOES = 'Better Shoes'
     BOOTS = 'Snow Boots'
     NEWLOC = 'New Location'
+    TOY = 'Plastic Toy'
 
