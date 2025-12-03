@@ -16,6 +16,7 @@ class_name BKSim_Game extends Control
 @export var moving_backdrop: MovingBackdrop
 @export var message_queue: MessageQueue
 @export var stats: Container
+@export var text_scene: TextScene
 @export_group("")
 
 signal return_to_menu
@@ -57,14 +58,16 @@ var current_weather: Weather :
 				node.set_visible(val == Weather.SNOW)
 			moving_backdrop.weather = val
 var direction: int = 1
+var post_cutscene_direction: int = 1
 var remaining_locations: int = -1
 var connected_key: String
 var in_focus: bool = false
-var paused: bool = true :
-	set(val):
-		paused = val
-		if not val:
-			unpaused.emit()
+var paused: bool = true : set = set_paused
+
+func set_paused(val: bool) -> void:
+	paused = val
+	if not val:
+		unpaused.emit()
 
 func reset_item() -> void:
 	run_speed = 1
@@ -194,7 +197,7 @@ func save_to_server() -> void:
 			{"operation": "replace", "value": {
 				"pos": roundi(current_position),
 				"weather": current_weather as int,
-				"dir": direction,
+				"dir": post_cutscene_direction,
 			}}
 		]
 	})
@@ -235,11 +238,11 @@ func _notification(what: int) -> void:
 		in_focus = false
 
 func _physics_process(_delta: float) -> void:
-	if not in_focus: return
+	#if not in_focus: return
 	if paused: return
 	if current_weather == Weather.NONE: return
 	var dx := get_speed() * direction
-	current_position += dx
+	current_position += dx * 1
 	if roundi(current_position) % 50 == 0:
 		save_to_server()
 	if direction > 0:
@@ -248,10 +251,14 @@ func _physics_process(_delta: float) -> void:
 			current_position = bk_position
 			#if not in_focus: return
 			var start_key := (current_weather as int) * 100 + 1
+			var found_loc := -1
 			for loc in range(start_key, start_key + locs_per_weather):
 				if not Archipelago.conn.slot_locations[loc]:
 					Archipelago.collect_location(loc)
+					found_loc = loc
 					break
+			post_cutscene_direction = -1
+			save_to_server()
 			paused = true
 			moving_backdrop.bk_mode = true
 			while not moving_backdrop.bk_building or (moving_backdrop.bk_building.position.x + moving_backdrop.bk_building.size.x / 2.0 > 320):
@@ -259,7 +266,8 @@ func _physics_process(_delta: float) -> void:
 				var dist := minf(limit, dx * 2)
 				moving_backdrop.move_by(dist)
 				await get_tree().physics_frame
-			# TODO Popup for what you got
+			Archipelago.conn.scout(found_loc, 0, popup_found)
+			await unpaused
 			paused = false
 			set_direction(-1)
 			save_to_server()
@@ -284,9 +292,22 @@ func _physics_process(_delta: float) -> void:
 
 func set_direction(dir: int) -> void:
 	assert(dir == 1 or dir == -1)
+	post_cutscene_direction = dir
 	if direction != dir:
 		direction = dir
 		moving_backdrop.swap_direction()
 
 func _on_toggle_stats_pressed() -> void:
 	stats.visible = not stats.visible
+
+func popup_found(itm: NetworkItem) -> void:
+	var msg: String
+	if itm.dest_player_id == Archipelago.conn.player_id:
+		msg = "Your meal came with a bonus!\nFound your own '%s'!" % itm.get_name()
+	else:
+		msg = "Your meal came with a bonus!\nFound %s's '%s'!" % [Archipelago.conn.get_player_name(itm.dest_player_id), itm.get_name()]
+	await text_scene.play(msg, 3.0, 10.0)
+	var tw := create_tween()
+	tw.tween_property(text_scene, "modulate:a", 0.0, 1.0)
+	await tw.finished
+	set_paused(false)

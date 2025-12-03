@@ -1,10 +1,12 @@
-[gd_scene load_steps=13 format=3 uid="uid://c3dc0h14m5kem"]
+[gd_scene load_steps=14 format=3 uid="uid://c3dc0h14m5kem"]
 
 [ext_resource type="Script" uid="uid://clt6f0826b4em" path="res://scripts/main_menu.gd" id="1_7ycvg"]
 [ext_resource type="Script" uid="uid://xtkcht8bmaja" path="res://scripts/manager.gd" id="1_qwutr"]
 [ext_resource type="PackedScene" uid="uid://ciysvlcp7d35f" path="res://background.tscn" id="3_hq1ik"]
+[ext_resource type="StyleBox" uid="uid://cxit8vio6x158" path="res://resources/faded_panel_sb.tres" id="4_wr18j"]
 [ext_resource type="PackedScene" uid="uid://nx0ygxs7tyme" path="res://backdrop.tscn" id="7_7ycvg"]
 [ext_resource type="Theme" uid="uid://bk5d04iu41rhp" path="res://theme.tres" id="10_wr18j"]
+[ext_resource type="Texture2D" uid="uid://cg75gbbho43ut" path="res://graphics/spinner.png" id="11_qwutr"]
 [ext_resource type="Script" uid="uid://bh60v6cp737gm" path="res://scripts/opening_scene.gd" id="12_671wp"]
 [ext_resource type="Script" uid="uid://deugr1n12t31u" path="res://scripts/game.gd" id="13_mo76n"]
 [ext_resource type="PackedScene" uid="uid://dmoywvjuvjat0" path="res://received_msg.tscn" id="19_6jybn"]
@@ -28,17 +30,6 @@ corner_detail = 5
 font_size = 30
 outline_size = 8
 outline_color = Color(0, 0, 0, 1)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_671wp"]
-content_margin_left = 20.0
-content_margin_top = 10.0
-content_margin_right = 20.0
-content_margin_bottom = 10.0
-bg_color = Color(0, 0, 0, 0.376471)
-corner_radius_top_left = 32
-corner_radius_top_right = 32
-corner_radius_bottom_right = 32
-corner_radius_bottom_left = 32
 
 [node name="Main Scene" type="PanelContainer" node_paths=PackedStringArray("main_menu", "text_scene", "game")]
 texture_filter = 1
@@ -107,7 +98,7 @@ layout_mode = 2
 layout_mode = 2
 size_flags_horizontal = 8
 size_flags_vertical = 4
-theme_override_styles/panel = SubResource("StyleBoxFlat_671wp")
+theme_override_styles/panel = ExtResource("4_wr18j")
 
 [node name="ButtonBox" type="VBoxContainer" parent="Menu (Home)/Control/CenterContainer/MarginContainer/Menu_Main"]
 layout_mode = 2
@@ -133,7 +124,7 @@ text = "Exit"
 layout_mode = 2
 size_flags_horizontal = 8
 size_flags_vertical = 4
-theme_override_styles/panel = SubResource("StyleBoxFlat_671wp")
+theme_override_styles/panel = ExtResource("4_wr18j")
 
 [node name="ConnectBox" type="GridContainer" parent="Menu (Home)/Control/CenterContainer/MarginContainer/Menu_Connect"]
 layout_mode = 2
@@ -198,7 +189,7 @@ text = "Connect"
 layout_mode = 2
 text = "Back"
 
-[node name="Game" type="Control" parent="." node_paths=PackedStringArray("runwalk_label", "speed_label", "rain_label", "snow_label", "distance_label", "sun_button", "rain_button", "snow_button", "buttons", "progress", "progress_label", "embark_label", "moving_backdrop", "message_queue", "stats")]
+[node name="Game" type="Control" parent="." node_paths=PackedStringArray("runwalk_label", "speed_label", "rain_label", "snow_label", "distance_label", "sun_button", "rain_button", "snow_button", "buttons", "progress", "progress_label", "embark_label", "moving_backdrop", "message_queue", "stats", "text_scene")]
 texture_filter = 2
 layout_mode = 2
 script = ExtResource("13_mo76n")
@@ -217,6 +208,7 @@ embark_label = NodePath("Buttons/VBoxContainer/EmbarkLabel")
 moving_backdrop = NodePath("Backdrop")
 message_queue = NodePath("MessageQueue")
 stats = NodePath("MarginContainer/VBoxContainer/Stats")
+text_scene = NodePath("../TextCutscene")
 
 [node name="Backdrop" parent="Game" node_paths=PackedStringArray("drifting_nodes") instance=ExtResource("7_7ycvg")]
 layout_mode = 1
@@ -386,27 +378,40 @@ theme_override_constants/margin_bottom = 16
 layout_mode = 2
 size_flags_vertical = 8
 
-[node name="TextCutscene" type="Control" parent="." node_paths=PackedStringArray("lbl")]
+[node name="TextCutscene" type="Control" parent="." node_paths=PackedStringArray("lbl", "spinner")]
 layout_mode = 2
+mouse_filter = 2
 script = ExtResource("12_671wp")
-lbl = NodePath("Label")
+lbl = NodePath("PanelContainer/Label")
+spinner = NodePath("Spinner")
 
-[node name="Label" type="Label" parent="TextCutscene"]
+[node name="PanelContainer" type="PanelContainer" parent="TextCutscene"]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -20.0
-offset_top = -11.5
-offset_right = 20.0
-offset_bottom = 11.5
+offset_left = -112.0
+offset_top = -24.5
+offset_right = 112.0
+offset_bottom = 24.5
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_styles/panel = ExtResource("4_wr18j")
+
+[node name="Label" type="Label" parent="TextCutscene/PanelContainer"]
+layout_mode = 2
 text = "Damn... BK'd again.
 Guess it's time to grab lunch."
 horizontal_alignment = 1
+
+[node name="Spinner" type="Sprite2D" parent="TextCutscene"]
+position = Vector2(320, 229)
+scale = Vector2(0.33, 0.33)
+texture = ExtResource("11_qwutr")
+hframes = 8
+vframes = 2
 
 [connection signal="pressed" from="Menu (Home)/Control/CenterContainer/MarginContainer/Menu_Main/ButtonBox/Start" to="Menu (Home)" method="_on_start_pressed"]
 [connection signal="pressed" from="Menu (Home)/Control/CenterContainer/MarginContainer/Menu_Main/ButtonBox/Exit" to="Menu (Home)" method="_on_exit_pressed"]
@@ -422,3 +427,4 @@ horizontal_alignment = 1
 [connection signal="return_to_menu" from="Game" to="." method="_on_back_to_menu_pressed"]
 [connection signal="pressed" from="Game/MarginContainer/VBoxContainer/HBoxContainer/ToggleStats" to="Game" method="_on_toggle_stats_pressed"]
 [connection signal="pressed" from="Game/MarginContainer/VBoxContainer/HBoxContainer/BackToMenu" to="Game" method="_on_back_to_menu_pressed"]
+[connection signal="gui_input" from="TextCutscene/PanelContainer" to="TextCutscene" method="_on_panel_container_gui_input"]
