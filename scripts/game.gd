@@ -15,6 +15,7 @@ class_name BKSim_Game extends Control
 @export var embark_label: Label
 @export var moving_backdrop: MovingBackdrop
 @export var message_queue: MessageQueue
+@export var stats: Container
 @export_group("")
 
 signal return_to_menu
@@ -109,6 +110,7 @@ func refr_locs() -> void:
 	embark_label.text = "Embark:" if remaining_locations else "GOAL COMPLETE!"
 
 func _ready() -> void:
+	stats.visible = false
 	Archipelago.connected.connect(on_connect)
 	Archipelago.remove_location.connect(refr_locs.unbind(1))
 	Archipelago.printjson.connect(printjson)
@@ -275,3 +277,6 @@ func set_direction(dir: int) -> void:
 	if direction != dir:
 		direction = dir
 		moving_backdrop.swap_direction()
+
+func _on_toggle_stats_pressed() -> void:
+	stats.visible = not stats.visible

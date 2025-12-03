@@ -221,15 +221,15 @@ text = "Damn... BK'd again.
 Guess it's time to grab lunch."
 horizontal_alignment = 1
 
-[node name="Game" type="Control" parent="." node_paths=PackedStringArray("runwalk_label", "speed_label", "rain_label", "snow_label", "distance_label", "sun_button", "rain_button", "snow_button", "buttons", "progress", "progress_label", "embark_label", "moving_backdrop", "message_queue")]
+[node name="Game" type="Control" parent="." node_paths=PackedStringArray("runwalk_label", "speed_label", "rain_label", "snow_label", "distance_label", "sun_button", "rain_button", "snow_button", "buttons", "progress", "progress_label", "embark_label", "moving_backdrop", "message_queue", "stats")]
 texture_filter = 2
 layout_mode = 2
 script = ExtResource("13_mo76n")
-runwalk_label = NodePath("Stats/Stats/WalkRun")
-speed_label = NodePath("Stats/Stats/Speed")
-rain_label = NodePath("Stats/Stats/RainSpeed")
-snow_label = NodePath("Stats/Stats/SnowSpeed")
-distance_label = NodePath("Stats/Stats/Distance")
+runwalk_label = NodePath("MarginContainer/VBoxContainer/Stats/WalkRun")
+speed_label = NodePath("MarginContainer/VBoxContainer/Stats/Speed")
+rain_label = NodePath("MarginContainer/VBoxContainer/Stats/RainSpeed")
+snow_label = NodePath("MarginContainer/VBoxContainer/Stats/SnowSpeed")
+distance_label = NodePath("MarginContainer/VBoxContainer/Stats/Distance")
 sun_button = NodePath("Buttons/VBoxContainer/Sunny")
 rain_button = NodePath("Buttons/VBoxContainer/Rainy")
 snow_button = NodePath("Buttons/VBoxContainer/Snowy")
@@ -239,6 +239,7 @@ progress_label = NodePath("Progress/HBoxContainer/Label2")
 embark_label = NodePath("Buttons/VBoxContainer/EmbarkLabel")
 moving_backdrop = NodePath("Backdrop")
 message_queue = NodePath("MessageQueue")
+stats = NodePath("MarginContainer/VBoxContainer/Stats")
 
 [node name="Backdrop" parent="Game" node_paths=PackedStringArray("drifting_nodes") instance=ExtResource("7_7ycvg")]
 layout_mode = 1
@@ -247,69 +248,76 @@ NodePath("MovingBackdrop/MovingSkyRain"): 20.0,
 NodePath("MovingBackdrop/MovingSkySnow"): 5.0
 }
 
-[node name="Stats" type="MarginContainer" parent="Game"]
-layout_mode = 1
-anchors_preset = 11
-anchor_left = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -122.0
-grow_horizontal = 0
-grow_vertical = 2
-theme_override_constants/margin_top = 32
-theme_override_constants/margin_right = 10
-
-[node name="Stats" type="GridContainer" parent="Game/Stats"]
-layout_mode = 2
-columns = 2
-
-[node name="WalkRun" type="Label" parent="Game/Stats/Stats"]
-layout_mode = 2
-text = "Run Speed:"
-horizontal_alignment = 2
-
-[node name="Speed" type="Label" parent="Game/Stats/Stats"]
-layout_mode = 2
-text = "100.0"
-
-[node name="Label" type="Label" parent="Game/Stats/Stats"]
-layout_mode = 2
-text = "Rain Speed:"
-horizontal_alignment = 2
-
-[node name="RainSpeed" type="Label" parent="Game/Stats/Stats"]
-layout_mode = 2
-text = "100.0"
-
-[node name="Label2" type="Label" parent="Game/Stats/Stats"]
-layout_mode = 2
-text = "Snow Speed:"
-horizontal_alignment = 2
-
-[node name="SnowSpeed" type="Label" parent="Game/Stats/Stats"]
-layout_mode = 2
-text = "100.0"
-
-[node name="Label3" type="Label" parent="Game/Stats/Stats"]
-layout_mode = 2
-text = "Distance:"
-horizontal_alignment = 2
-
-[node name="Distance" type="Label" parent="Game/Stats/Stats"]
-layout_mode = 2
-text = "5000"
-
-[node name="BackToMenu" type="Button" parent="Game"]
-texture_filter = 2
+[node name="MarginContainer" type="MarginContainer" parent="Game"]
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -33.0
-offset_bottom = 28.0
+offset_left = -104.0
+offset_bottom = 40.0
 grow_horizontal = 0
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 10
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Game/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Game/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 8
+
+[node name="ToggleStats" type="Button" parent="Game/MarginContainer/VBoxContainer/HBoxContainer"]
+texture_filter = 2
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "Stats"
+
+[node name="BackToMenu" type="Button" parent="Game/MarginContainer/VBoxContainer/HBoxContainer"]
+texture_filter = 2
+layout_mode = 2
 theme_override_font_sizes/font_size = 16
 text = " Exit "
+
+[node name="Stats" type="GridContainer" parent="Game/MarginContainer/VBoxContainer"]
+layout_mode = 2
+columns = 2
+
+[node name="WalkRun" type="Label" parent="Game/MarginContainer/VBoxContainer/Stats"]
+layout_mode = 2
+text = "Run Speed:"
+horizontal_alignment = 2
+
+[node name="Speed" type="Label" parent="Game/MarginContainer/VBoxContainer/Stats"]
+layout_mode = 2
+text = "100.0"
+
+[node name="Label" type="Label" parent="Game/MarginContainer/VBoxContainer/Stats"]
+layout_mode = 2
+text = "Rain Speed:"
+horizontal_alignment = 2
+
+[node name="RainSpeed" type="Label" parent="Game/MarginContainer/VBoxContainer/Stats"]
+layout_mode = 2
+text = "100.0"
+
+[node name="Label2" type="Label" parent="Game/MarginContainer/VBoxContainer/Stats"]
+layout_mode = 2
+text = "Snow Speed:"
+horizontal_alignment = 2
+
+[node name="SnowSpeed" type="Label" parent="Game/MarginContainer/VBoxContainer/Stats"]
+layout_mode = 2
+text = "100.0"
+
+[node name="Label3" type="Label" parent="Game/MarginContainer/VBoxContainer/Stats"]
+layout_mode = 2
+text = "Distance:"
+horizontal_alignment = 2
+
+[node name="Distance" type="Label" parent="Game/MarginContainer/VBoxContainer/Stats"]
+layout_mode = 2
+text = "5000"
 
 [node name="Buttons" type="MarginContainer" parent="Game"]
 layout_mode = 1
@@ -412,4 +420,5 @@ size_flags_vertical = 8
 [connection signal="open_game" from="Game" to="." method="fade_to_game"]
 [connection signal="play_opening" from="Game" to="." method="fade_to_opening"]
 [connection signal="return_to_menu" from="Game" to="." method="_on_back_to_menu_pressed"]
-[connection signal="pressed" from="Game/BackToMenu" to="Game" method="_on_back_to_menu_pressed"]
+[connection signal="pressed" from="Game/MarginContainer/VBoxContainer/HBoxContainer/ToggleStats" to="Game" method="_on_toggle_stats_pressed"]
+[connection signal="pressed" from="Game/MarginContainer/VBoxContainer/HBoxContainer/BackToMenu" to="Game" method="_on_back_to_menu_pressed"]
