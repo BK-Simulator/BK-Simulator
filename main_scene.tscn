@@ -40,7 +40,7 @@ corner_radius_top_right = 32
 corner_radius_bottom_right = 32
 corner_radius_bottom_left = 32
 
-[node name="Main Scene" type="PanelContainer" node_paths=PackedStringArray("main_menu", "opening_scene", "game")]
+[node name="Main Scene" type="PanelContainer" node_paths=PackedStringArray("main_menu", "text_scene", "game")]
 texture_filter = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -50,7 +50,7 @@ grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_o3jxj")
 script = ExtResource("1_qwutr")
 main_menu = NodePath("Menu (Home)")
-opening_scene = NodePath("OpeningScene")
+text_scene = NodePath("TextCutscene")
 game = NodePath("Game")
 
 [node name="Background" parent="." instance=ExtResource("3_hq1ik")]
@@ -197,29 +197,6 @@ text = "Connect"
 [node name="Back" type="Button" parent="Menu (Home)/Control/CenterContainer/MarginContainer/Menu_Connect/ConnectBox/VBoxContainer"]
 layout_mode = 2
 text = "Back"
-
-[node name="OpeningScene" type="Control" parent="." node_paths=PackedStringArray("lbl")]
-visible = false
-layout_mode = 2
-script = ExtResource("12_671wp")
-lbl = NodePath("Label")
-
-[node name="Label" type="Label" parent="OpeningScene"]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -20.0
-offset_top = -11.5
-offset_right = 20.0
-offset_bottom = 11.5
-grow_horizontal = 2
-grow_vertical = 2
-text = "Damn... BK'd again.
-Guess it's time to grab lunch."
-horizontal_alignment = 1
 
 [node name="Game" type="Control" parent="." node_paths=PackedStringArray("runwalk_label", "speed_label", "rain_label", "snow_label", "distance_label", "sun_button", "rain_button", "snow_button", "buttons", "progress", "progress_label", "embark_label", "moving_backdrop", "message_queue", "stats")]
 texture_filter = 2
@@ -409,6 +386,28 @@ theme_override_constants/margin_bottom = 16
 layout_mode = 2
 size_flags_vertical = 8
 
+[node name="TextCutscene" type="Control" parent="." node_paths=PackedStringArray("lbl")]
+layout_mode = 2
+script = ExtResource("12_671wp")
+lbl = NodePath("Label")
+
+[node name="Label" type="Label" parent="TextCutscene"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -11.5
+offset_right = 20.0
+offset_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "Damn... BK'd again.
+Guess it's time to grab lunch."
+horizontal_alignment = 1
+
 [connection signal="pressed" from="Menu (Home)/Control/CenterContainer/MarginContainer/Menu_Main/ButtonBox/Start" to="Menu (Home)" method="_on_start_pressed"]
 [connection signal="pressed" from="Menu (Home)/Control/CenterContainer/MarginContainer/Menu_Main/ButtonBox/Exit" to="Menu (Home)" method="_on_exit_pressed"]
 [connection signal="text_submitted" from="Menu (Home)/Control/CenterContainer/MarginContainer/Menu_Connect/ConnectBox/IP" to="Menu (Home)" method="_on_connect_pressed" unbinds=1]
@@ -418,6 +417,7 @@ size_flags_vertical = 8
 [connection signal="pressed" from="Menu (Home)/Control/CenterContainer/MarginContainer/Menu_Connect/ConnectBox/VBoxContainer/Connect" to="Menu (Home)" method="_on_connect_pressed"]
 [connection signal="pressed" from="Menu (Home)/Control/CenterContainer/MarginContainer/Menu_Connect/ConnectBox/VBoxContainer/Back" to="Menu (Home)" method="_on_back_pressed"]
 [connection signal="open_game" from="Game" to="." method="fade_to_game"]
+[connection signal="play_ending" from="Game" to="." method="fade_to_ending"]
 [connection signal="play_opening" from="Game" to="." method="fade_to_opening"]
 [connection signal="return_to_menu" from="Game" to="." method="_on_back_to_menu_pressed"]
 [connection signal="pressed" from="Game/MarginContainer/VBoxContainer/HBoxContainer/ToggleStats" to="Game" method="_on_toggle_stats_pressed"]

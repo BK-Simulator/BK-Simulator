@@ -20,8 +20,10 @@ class_name BKSim_Game extends Control
 
 signal return_to_menu
 signal play_opening
-signal play_ending
+signal play_ending(done: bool)
 signal open_game
+
+signal unpaused
 
 const MILES := 60
 const RUN_SPEED := 5
@@ -58,7 +60,11 @@ var direction: int = 1
 var remaining_locations: int = -1
 var connected_key: String
 var in_focus: bool = false
-var paused: bool = true
+var paused: bool = true :
+	set(val):
+		paused = val
+		if not val:
+			unpaused.emit()
 
 func reset_item() -> void:
 	run_speed = 1
@@ -234,11 +240,10 @@ func _physics_process(_delta: float) -> void:
 	if current_weather == Weather.NONE: return
 	var dx := get_speed() * direction
 	current_position += dx
-	#current_position = bk_position - 1 * MILES
-	#current_position = 1 * MILES
 	if roundi(current_position) % 50 == 0:
 		save_to_server()
 	if direction > 0:
+		#current_position = bk_position
 		if current_position >= bk_position:
 			current_position = bk_position
 			#if not in_focus: return
@@ -257,18 +262,23 @@ func _physics_process(_delta: float) -> void:
 			# TODO Popup for what you got
 			paused = false
 			set_direction(-1)
+			save_to_server()
 		else:
 			moving_backdrop.move_by(dx)
 	else:
+		#current_position = minf(current_position, 10 * MILES)
 		if current_position <= 0:
 			current_position = 0
 			#if not in_focus: return
 			if remaining_locations == 0:
-				play_ending.emit()
 				Archipelago.set_client_status(AP.ClientStatus.CLIENT_GOAL)
 			current_weather = Weather.NONE
 			set_direction(1)
-			init_backdrop()
+			save_to_server()
+			paused = true
+			play_ending.emit(remaining_locations == 0)
+			await get_tree().create_timer(1.5).timeout
+			init_backdrop(true)
 		else:
 			moving_backdrop.move_by(dx)
 

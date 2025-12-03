@@ -1,8 +1,10 @@
 extends PanelContainer
 
 @export var main_menu: Container
-@export var opening_scene: Control
-@export var game: Control
+@export var text_scene: TextScene
+@export var game: BKSim_Game
+
+const end_names: Array[String] = ["EmilyV"]
 
 const FADE_DUR := 1.5
 var in_transition: bool = false
@@ -10,7 +12,7 @@ var in_transition: bool = false
 func _ready() -> void:
 	randomize_wallpaper()
 	main_menu.set_visible(true)
-	opening_scene.set_visible(false)
+	text_scene.set_visible(false)
 	game.set_visible(false)
 
 func randomize_wallpaper() -> void:
@@ -25,17 +27,33 @@ func fade_to_opening() -> void:
 	tw.tween_property(main_menu, "modulate:a", 0.0, FADE_DUR)
 	await tw.finished
 	main_menu.set_visible(false)
-	opening_scene.reset()
-	opening_scene.modulate.a = 1.0
-	opening_scene.set_visible(true)
-	await opening_scene.play()
+	await text_scene.play("Damn... BK'd again.\nGuess it's time to grab lunch.", 3.0, 3.0)
 	game.set_visible(true)
 	game.modulate.a = 0.0
 	tw = create_tween()
-	tw.tween_property(opening_scene, "modulate:a", 0.0, FADE_DUR)
+	tw.tween_property(text_scene, "modulate:a", 0.0, FADE_DUR)
 	tw.parallel().tween_property(game, "modulate:a", 1.0, FADE_DUR)
 	await tw.finished
-	opening_scene.set_visible(false)
+	text_scene.set_visible(false)
+	in_transition = false
+	transition_end.emit()
+
+func fade_to_ending(done: bool) -> void:
+	if in_transition: await transition_end
+	in_transition = true
+	var tw := create_tween()
+	tw.tween_property(game, "modulate:a", 0.0, FADE_DUR)
+	await tw.finished
+	if done:
+		await text_scene.play("Oh, finally! %s sent me the item I was waiting for.\nNow I can keep playing Archipelago!" % end_names.pick_random(), 4.0, 10.0)
+	else:
+		await text_scene.play("Still in BK Mode...", 2.0, 2.0)
+	tw = create_tween()
+	tw.tween_property(text_scene, "modulate:a", 0.0, FADE_DUR)
+	tw.parallel().tween_property(game, "modulate:a", 1.0, FADE_DUR)
+	await tw.finished
+	text_scene.set_visible(false)
+	game.paused = false
 	in_transition = false
 	transition_end.emit()
 
