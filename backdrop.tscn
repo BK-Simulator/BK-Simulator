@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=3 uid="uid://nx0ygxs7tyme"]
+[gd_scene load_steps=28 format=3 uid="uid://nx0ygxs7tyme"]
 
 [ext_resource type="Script" uid="uid://cr07pcop2o4wl" path="res://scripts/moving_backdrop.gd" id="1_gw13o"]
 [ext_resource type="Texture2D" uid="uid://b8lil1kkqqub8" path="res://graphics/still_sunny_sky.png" id="2_lt5py"]
@@ -8,13 +8,16 @@
 [ext_resource type="Texture2D" uid="uid://gx1k0xx0p1fb" path="res://graphics/buildings/1_front.png" id="4_81u8g"]
 [ext_resource type="Texture2D" uid="uid://dbrpuncnhrukj" path="res://graphics/moving_rainy_sky.png" id="4_mph4s"]
 [ext_resource type="Texture2D" uid="uid://whjgafu4kkvq" path="res://graphics/still_road.png" id="5_60f5h"]
+[ext_resource type="Texture2D" uid="uid://21710ipjy2hu" path="res://graphics/buildings/1_snow.png" id="5_d00r0"]
 [ext_resource type="Texture2D" uid="uid://qtnoooeo55e1" path="res://graphics/buildings/2_back.png" id="5_n04an"]
 [ext_resource type="Texture2D" uid="uid://bf36np238cp5w" path="res://graphics/buildings/2_front.png" id="6_n7rrd"]
 [ext_resource type="Texture2D" uid="uid://bjc4uw7iei8gw" path="res://graphics/mobile_road.png" id="6_ydj75"]
 [ext_resource type="Texture2D" uid="uid://d2at8fjhheq8w" path="res://graphics/buildings/bk1_back.png" id="7_7j055"]
 [ext_resource type="Texture2D" uid="uid://ceg4tb0wfo20s" path="res://graphics/buildings/bk1_front.png" id="8_1q8x7"]
+[ext_resource type="Texture2D" uid="uid://b7mtnjxqnscm4" path="res://graphics/buildings/2_snow.png" id="8_pgkft"]
 [ext_resource type="Script" uid="uid://cc0ltwef4x8cg" path="res://scripts/tint_building.gd" id="9_kfrdv"]
 [ext_resource type="Texture2D" uid="uid://dykwganjll4ov" path="res://graphics/still_snowy_sky.png" id="12_n04an"]
+[ext_resource type="Texture2D" uid="uid://clit4q1788gyi" path="res://graphics/buildings/bk1_snow.png" id="12_vfj5a"]
 [ext_resource type="Texture2D" uid="uid://33vbfu6nuoym" path="res://graphics/moving_snowy_sky.png" id="14_n7rrd"]
 [ext_resource type="Shader" uid="uid://cmu8ryj2t8qw4" path="res://shaders/rain.gdshader" id="15_fdqdj"]
 [ext_resource type="Texture2D" uid="uid://ck5jf65a87iso" path="res://graphics/moving_snow_bg.png" id="17_7j055"]
@@ -24,12 +27,14 @@
 script = ExtResource("2_me6dy")
 back_tex = ExtResource("3_fdqdj")
 front_tex = ExtResource("4_81u8g")
+snow_tex = ExtResource("5_d00r0")
 metadata/_custom_type_script = "uid://c6qyb6w5xiq5d"
 
 [sub_resource type="Resource" id="Resource_pgkft"]
 script = ExtResource("2_me6dy")
 back_tex = ExtResource("5_n04an")
 front_tex = ExtResource("6_n7rrd")
+snow_tex = ExtResource("8_pgkft")
 metadata/_custom_type_script = "uid://c6qyb6w5xiq5d"
 
 [sub_resource type="Resource" id="Resource_vfj5a"]
@@ -37,6 +42,7 @@ script = ExtResource("9_kfrdv")
 tint = Color(0.651, 0.64, 0.8, 1)
 back_tex = ExtResource("7_7j055")
 front_tex = ExtResource("8_1q8x7")
+snow_tex = ExtResource("12_vfj5a")
 metadata/_custom_type_script = "uid://cc0ltwef4x8cg"
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_fdqdj"]
@@ -129,7 +135,6 @@ texture = ExtResource("6_ydj75")
 stretch_mode = 1
 
 [node name="MovingSnowBG" type="TextureRect" parent="MovingBackdrop"]
-visible = false
 offset_left = -640.0
 offset_right = 1280.0
 offset_bottom = 360.0
@@ -137,7 +142,6 @@ texture = ExtResource("17_7j055")
 stretch_mode = 1
 
 [node name="MovingSnowFG" type="TextureRect" parent="MovingBackdrop"]
-visible = false
 z_index = 10
 offset_left = -640.0
 offset_right = 1280.0
@@ -146,7 +150,6 @@ texture = ExtResource("18_1q8x7")
 stretch_mode = 1
 
 [node name="Weather" type="Control" parent="MovingBackdrop"]
-visible = false
 layout_mode = 3
 anchors_preset = 0
 offset_left = -640.0
@@ -241,7 +244,6 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="Rain" type="ColorRect" parent="MovingBackdrop/Weather"]
-visible = false
 z_index = 100
 material = SubResource("ShaderMaterial_81u8g")
 instance_shader_parameters/drop_count = 200.0
@@ -255,7 +257,7 @@ anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = -640.0
 offset_top = -180.0
-offset_right = 320.0
+offset_right = 960.0
 offset_bottom = 180.0
 grow_horizontal = 2
 grow_vertical = 2

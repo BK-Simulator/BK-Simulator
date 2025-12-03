@@ -1,4 +1,4 @@
-extends Control
+class_name BKSim_Game extends Control
 
 @export_group("Nodes")
 @export var runwalk_label: Label
@@ -52,6 +52,7 @@ var current_weather: Weather :
 				node.set_visible(val == Weather.RAIN)
 			for node in moving_backdrop.snowy_nodes:
 				node.set_visible(val == Weather.SNOW)
+			moving_backdrop.weather = val
 var direction: int = 1
 var remaining_locations: int = -1
 var connected_key: String
@@ -108,7 +109,6 @@ func refr_locs() -> void:
 	embark_label.text = "Embark:" if remaining_locations else "GOAL COMPLETE!"
 
 func _ready() -> void:
-	randomize_wallpaper()
 	Archipelago.connected.connect(on_connect)
 	Archipelago.remove_location.connect(refr_locs.unbind(1))
 	Archipelago.printjson.connect(printjson)
@@ -159,9 +159,6 @@ func _exit_tree() -> void:
 	if Archipelago.is_ap_connected():
 		save_to_server()
 
-func randomize_wallpaper() -> void:
-	RenderingServer.global_shader_parameter_set_override(&"wallpaper_tint", Color.from_hsv(randf(), randf_range(0, 0.2) * randf_range(0.5, 1.0), 1.0))
-
 func resume_from_server(data: Variant) -> void:
 	if data == null:
 		data = {
@@ -174,7 +171,6 @@ func resume_from_server(data: Variant) -> void:
 		current_position = data["pos"]
 		current_weather = data["weather"] as Weather
 		set_direction(data["dir"])
-		randomize_wallpaper()
 		init_backdrop(true)
 		if current_weather == Weather.NONE and remaining_locations > 0:
 			play_opening.emit()

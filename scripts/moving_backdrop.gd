@@ -14,10 +14,11 @@ var active_buildings: Array[TextureRect]
 var bk_building: TextureRect
 var direction := -1
 var bk_mode := false
+var weather: BKSim_Game.Weather
 
 func add_building() -> void:
 	var blueprint: Building = (bk_buildings if bk_mode else buildings).pick_random() as Building
-	var building := blueprint.instantiate()
+	var building := blueprint.instantiate(weather == BKSim_Game.Weather.SNOW)
 	if bk_mode:
 		bk_building = building
 	bk_mode = false

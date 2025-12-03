@@ -8,9 +8,13 @@ const FADE_DUR := 1.5
 var in_transition: bool = false
 
 func _ready() -> void:
+	randomize_wallpaper()
 	main_menu.set_visible(true)
 	opening_scene.set_visible(false)
 	game.set_visible(false)
+
+func randomize_wallpaper() -> void:
+	RenderingServer.global_shader_parameter_set_override(&"wallpaper_tint", Color.from_hsv(randf(), randf_range(0, 0.2) * randf_range(0.5, 1.0), 1.0))
 
 signal transition_end
 func fade_to_opening() -> void:
@@ -63,5 +67,6 @@ func fade_to_menu() -> void:
 	transition_end.emit()
 
 func _on_back_to_menu_pressed() -> void:
+	randomize_wallpaper()
 	await fade_to_menu()
 	Archipelago.ap_disconnect()
