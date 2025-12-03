@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b8lil1kkqqub8"
-path="res://.godot/imported/still_sky.png-be04c83f72a8260583099a3f1203cc0f.ctex"
+uid="uid://33vbfu6nuoym"
+path="res://.godot/imported/moving_snowy_sky.png-4236acdebbab4d9f96abe4556bc83e9a.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://graphics/still_sky.png"
-dest_files=["res://.godot/imported/still_sky.png-be04c83f72a8260583099a3f1203cc0f.ctex"]
+source_file="res://graphics/moving_snowy_sky.png"
+dest_files=["res://.godot/imported/moving_snowy_sky.png-4236acdebbab4d9f96abe4556bc83e9a.ctex"]
 
 [params]
 

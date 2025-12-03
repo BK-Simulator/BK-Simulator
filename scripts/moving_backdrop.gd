@@ -1,9 +1,14 @@
-class_name MovingBackdrop extends SubViewport
+class_name MovingBackdrop extends SubViewportContainer
 
 @export var buildings: Array[Building]
 @export var bk_buildings: Array[Building]
 @export_group("Nodes")
-@export var moving_road: TextureRect
+@export var subvp: SubViewport
+@export var moving_nodes: Array[Control]
+@export var drifting_nodes: Dictionary[TextureRect, float]
+@export var sunny_nodes: Array[Control]
+@export var rainy_nodes: Array[Control]
+@export var snowy_nodes: Array[Control]
 @export_group("")
 var active_buildings: Array[TextureRect]
 var bk_building: TextureRect
@@ -21,7 +26,7 @@ func add_building() -> void:
 	notifier.rect = Rect2(Vector2.ZERO, building.texture.get_size())
 	notifier.screen_entered.connect(func(): notifier.screen_exited.connect(remove_building.bind(building)))
 	building.add_child(notifier)
-	add_child(building)
+	subvp.add_child(building)
 	if direction > 0:
 		if active_buildings.is_empty():
 			building.position.x = -building.size.x
@@ -44,11 +49,12 @@ func remove_building(building: TextureRect) -> void:
 
 func move_by(amount: float) -> void:
 	amount = abs(amount) * direction
-	moving_road.position.x += amount
-	if moving_road.position.x > 0:
-		moving_road.position.x -= 640
-	elif moving_road.position.x < -640:
-		moving_road.position.x += 640
+	for node in moving_nodes:
+		node.position.x += amount
+		if node.position.x > 0:
+			node.position.x -= 640
+		elif node.position.x < -640:
+			node.position.x += 640
 	if active_buildings.is_empty(): return
 	for b in active_buildings:
 		b.position.x += amount
@@ -82,3 +88,12 @@ func populate_buildings() -> void:
 func swap_direction() -> void:
 	active_buildings.reverse()
 	direction = -direction
+
+func _process(delta: float) -> void:
+	for node in drifting_nodes:
+		var speed := drifting_nodes[node]
+		node.position.x += delta * speed
+		if node.position.x > 0:
+			node.position.x -= 640
+		elif node.position.x < -640:
+			node.position.x += 640

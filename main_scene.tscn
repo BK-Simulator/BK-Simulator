@@ -1,23 +1,12 @@
-[gd_scene load_steps=27 format=3 uid="uid://c3dc0h14m5kem"]
+[gd_scene load_steps=13 format=3 uid="uid://c3dc0h14m5kem"]
 
 [ext_resource type="Script" uid="uid://clt6f0826b4em" path="res://scripts/main_menu.gd" id="1_7ycvg"]
 [ext_resource type="Script" uid="uid://xtkcht8bmaja" path="res://scripts/manager.gd" id="1_qwutr"]
 [ext_resource type="PackedScene" uid="uid://ciysvlcp7d35f" path="res://background.tscn" id="3_hq1ik"]
-[ext_resource type="Script" uid="uid://cr07pcop2o4wl" path="res://scripts/moving_backdrop.gd" id="7_nfk4m"]
-[ext_resource type="Texture2D" uid="uid://whjgafu4kkvq" path="res://graphics/still_road.png" id="8_7ycvg"]
-[ext_resource type="Script" uid="uid://c6qyb6w5xiq5d" path="res://scripts/building.gd" id="8_671wp"]
-[ext_resource type="Texture2D" uid="uid://c2tcof14debu3" path="res://graphics/buildings/1_back.png" id="9_mo76n"]
-[ext_resource type="Texture2D" uid="uid://bjc4uw7iei8gw" path="res://graphics/mobile_road.png" id="9_wr18j"]
-[ext_resource type="Texture2D" uid="uid://gx1k0xx0p1fb" path="res://graphics/buildings/1_front.png" id="10_42l1d"]
+[ext_resource type="PackedScene" uid="uid://nx0ygxs7tyme" path="res://backdrop.tscn" id="7_7ycvg"]
 [ext_resource type="Theme" uid="uid://bk5d04iu41rhp" path="res://theme.tres" id="10_wr18j"]
-[ext_resource type="Texture2D" uid="uid://d2at8fjhheq8w" path="res://graphics/buildings/bk1_back.png" id="11_2jcla"]
-[ext_resource type="Texture2D" uid="uid://qtnoooeo55e1" path="res://graphics/buildings/2_back.png" id="11_7th4q"]
-[ext_resource type="Texture2D" uid="uid://bf36np238cp5w" path="res://graphics/buildings/2_front.png" id="12_6jybn"]
 [ext_resource type="Script" uid="uid://bh60v6cp737gm" path="res://scripts/opening_scene.gd" id="12_671wp"]
-[ext_resource type="Texture2D" uid="uid://ceg4tb0wfo20s" path="res://graphics/buildings/bk1_front.png" id="12_m35m6"]
 [ext_resource type="Script" uid="uid://deugr1n12t31u" path="res://scripts/game.gd" id="13_mo76n"]
-[ext_resource type="Script" uid="uid://cc0ltwef4x8cg" path="res://scripts/tint_building.gd" id="13_u0ygc"]
-[ext_resource type="Texture2D" uid="uid://b8lil1kkqqub8" path="res://graphics/still_sky.png" id="14_m35m6"]
 [ext_resource type="PackedScene" uid="uid://dmoywvjuvjat0" path="res://received_msg.tscn" id="19_6jybn"]
 [ext_resource type="Script" uid="uid://d28oxe04d22st" path="res://scripts/receive_queue.gd" id="20_84odl"]
 
@@ -50,25 +39,6 @@ corner_radius_top_left = 32
 corner_radius_top_right = 32
 corner_radius_bottom_right = 32
 corner_radius_bottom_left = 32
-
-[sub_resource type="Resource" id="Resource_2jcla"]
-script = ExtResource("8_671wp")
-back_tex = ExtResource("9_mo76n")
-front_tex = ExtResource("10_42l1d")
-metadata/_custom_type_script = "uid://c6qyb6w5xiq5d"
-
-[sub_resource type="Resource" id="Resource_84odl"]
-script = ExtResource("8_671wp")
-back_tex = ExtResource("11_7th4q")
-front_tex = ExtResource("12_6jybn")
-metadata/_custom_type_script = "uid://c6qyb6w5xiq5d"
-
-[sub_resource type="Resource" id="Resource_7th4q"]
-script = ExtResource("13_u0ygc")
-tint = Color(0.650667, 0.64, 0.8, 1)
-back_tex = ExtResource("11_2jcla")
-front_tex = ExtResource("12_m35m6")
-metadata/_custom_type_script = "uid://cc0ltwef4x8cg"
 
 [node name="Main Scene" type="PanelContainer" node_paths=PackedStringArray("main_menu", "opening_scene", "game")]
 texture_filter = 1
@@ -251,7 +221,7 @@ text = "Damn... BK'd again.
 Guess it's time to grab lunch."
 horizontal_alignment = 1
 
-[node name="Game" type="Control" parent="." node_paths=PackedStringArray("runwalk_label", "speed_label", "rain_label", "snow_label", "distance_label", "sun_button", "rain_button", "snow_button", "buttons", "progress", "progress_label", "embark_label", "backdrop_container", "moving_backdrop", "message_queue")]
+[node name="Game" type="Control" parent="." node_paths=PackedStringArray("runwalk_label", "speed_label", "rain_label", "snow_label", "distance_label", "sun_button", "rain_button", "snow_button", "buttons", "progress", "progress_label", "embark_label", "moving_backdrop", "message_queue")]
 texture_filter = 2
 layout_mode = 2
 script = ExtResource("13_mo76n")
@@ -267,51 +237,15 @@ buttons = NodePath("Buttons")
 progress = NodePath("Progress")
 progress_label = NodePath("Progress/HBoxContainer/Label2")
 embark_label = NodePath("Buttons/VBoxContainer/EmbarkLabel")
-backdrop_container = NodePath("Backdrop")
-moving_backdrop = NodePath("Backdrop/MovingBackdrop")
+moving_backdrop = NodePath("Backdrop")
 message_queue = NodePath("MessageQueue")
 
-[node name="Backdrop" type="SubViewportContainer" parent="Game"]
-texture_filter = 1
+[node name="Backdrop" parent="Game" node_paths=PackedStringArray("drifting_nodes") instance=ExtResource("7_7ycvg")]
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-stretch = true
-
-[node name="MovingBackdrop" type="SubViewport" parent="Game/Backdrop" node_paths=PackedStringArray("moving_road")]
-handle_input_locally = false
-size = Vector2i(640, 360)
-render_target_update_mode = 4
-script = ExtResource("7_nfk4m")
-buildings = Array[ExtResource("8_671wp")]([SubResource("Resource_2jcla"), SubResource("Resource_84odl")])
-bk_buildings = Array[ExtResource("8_671wp")]([SubResource("Resource_7th4q")])
-moving_road = NodePath("MovingRoad")
-
-[node name="StillSky" type="TextureRect" parent="Game/Backdrop/MovingBackdrop"]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-texture = ExtResource("14_m35m6")
-
-[node name="StillRoad" type="TextureRect" parent="Game/Backdrop/MovingBackdrop"]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-texture = ExtResource("8_7ycvg")
-
-[node name="MovingRoad" type="TextureRect" parent="Game/Backdrop/MovingBackdrop"]
-offset_left = -640.0
-offset_right = 1280.0
-offset_bottom = 360.0
-texture = ExtResource("9_wr18j")
-stretch_mode = 1
+drifting_nodes = {
+NodePath("MovingBackdrop/MovingSkyRain"): 20.0,
+NodePath("MovingBackdrop/MovingSkySnow"): 5.0
+}
 
 [node name="Stats" type="MarginContainer" parent="Game"]
 layout_mode = 1

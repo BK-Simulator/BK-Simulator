@@ -13,7 +13,6 @@ extends Control
 @export var progress: MarginContainer
 @export var progress_label: Label
 @export var embark_label: Label
-@export var backdrop_container: SubViewportContainer
 @export var moving_backdrop: MovingBackdrop
 @export var message_queue: MessageQueue
 @export_group("")
@@ -43,7 +42,16 @@ var current_position: float :
 	set(val):
 		current_position = val
 		progress_label.text = "%.2f" % (current_position / MILES)
-var current_weather: Weather
+var current_weather: Weather :
+	set(val):
+		current_weather = val
+		if val != Weather.NONE:
+			for node in moving_backdrop.sunny_nodes:
+				node.set_visible(val == Weather.SUN)
+			for node in moving_backdrop.rainy_nodes:
+				node.set_visible(val == Weather.RAIN)
+			for node in moving_backdrop.snowy_nodes:
+				node.set_visible(val == Weather.SNOW)
 var direction: int = 1
 var remaining_locations: int = -1
 var connected_key: String
@@ -203,16 +211,16 @@ func init_backdrop(instant := false) -> void:
 	var active := current_weather != Weather.NONE
 	buttons.set_visible(not active)
 	progress.set_visible(active)
-	backdrop_container.set_visible(active)
+	moving_backdrop.set_visible(active)
 	if active:
 		moving_backdrop.populate_buildings()
 	if instant:
-		backdrop_container.modulate.a = 1.0 if active else 0.0
+		moving_backdrop.modulate.a = 1.0 if active else 0.0
 		paused = not active
 	else:
 		paused = true
 		var tw := create_tween()
-		tw.tween_property(backdrop_container, "modulate:a", 1.0 if active else 0.0, FADE_DUR)
+		tw.tween_property(moving_backdrop, "modulate:a", 1.0 if active else 0.0, FADE_DUR)
 		if active:
 			tw.tween_callback(func(): paused = false)
 
@@ -228,6 +236,8 @@ func _physics_process(_delta: float) -> void:
 	if current_weather == Weather.NONE: return
 	var dx := get_speed() * direction
 	current_position += dx
+	#current_position = bk_position - 1 * MILES
+	#current_position = 1 * MILES
 	if roundi(current_position) % 50 == 0:
 		save_to_server()
 	if direction > 0:
