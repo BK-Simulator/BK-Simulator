@@ -241,7 +241,7 @@ func _notification(what: int) -> void:
 		in_focus = false
 
 func _physics_process(_delta: float) -> void:
-	#if not in_focus: return
+	if not in_focus: return
 	if paused: return
 	if current_weather == Weather.NONE: return
 	var dx := get_speed() * direction
