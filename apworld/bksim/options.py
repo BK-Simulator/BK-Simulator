@@ -46,12 +46,6 @@ class BKSim_Options(PerGameCommonOptions):
 
 
 options_presets = {
-    "Default": {
-        "locs_per_weather": 3,
-        "start_distance": 300,
-        "speed_per_upgrade": 2,
-        "extra_filler_rate": 0,
-    },
     "Quick": {
         "locs_per_weather": 1,
         "start_distance": 100,
