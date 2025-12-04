@@ -19,6 +19,7 @@ const end_names: Array[String] = ["EmilyV"]
 @export var message_queue: MessageQueue
 @export var stats: Container
 @export var text_scene: TextScene
+@export var settings_panel: MarginContainer
 @export_group("")
 
 signal return_to_menu
@@ -122,6 +123,7 @@ func refr_locs() -> void:
 
 func _ready() -> void:
 	stats.visible = false
+	settings_panel.visible = false
 	Archipelago.connected.connect(on_connect)
 	Archipelago.remove_location.connect(refr_locs.unbind(1))
 	Archipelago.printjson.connect(printjson)
@@ -204,11 +206,6 @@ func save_to_server() -> void:
 			}}
 		]
 	})
-
-func _on_back_to_menu_pressed() -> void:
-	save_to_server()
-	return_to_menu.emit()
-	paused = true
 
 func _on_embark(weather: int) -> void:
 	if current_weather == Weather.NONE:
@@ -302,9 +299,6 @@ func set_direction(dir: int) -> void:
 		direction = dir
 		moving_backdrop.swap_direction()
 
-func _on_toggle_stats_pressed() -> void:
-	stats.visible = not stats.visible
-
 func popup_found(itm: NetworkItem) -> void:
 	var msg: String
 	if not itm:
@@ -362,3 +356,17 @@ func pick_username() -> String:
 		available_names.append(player.get_name())
 
 	return available_names.pick_random()
+
+func _on_back_to_menu_pressed() -> void:
+	save_to_server()
+	return_to_menu.emit()
+	paused = true
+
+func _on_toggle_stats_pressed() -> void:
+	stats.visible = not stats.visible
+
+func _on_toggle_settings_pressed() -> void:
+	settings_panel.visible = not settings_panel.visible
+
+func _on_pin_window_toggled(toggled_on: bool) -> void:
+	get_window().always_on_top = toggled_on

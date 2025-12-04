@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://c2tcof14debu3"
-path="res://.godot/imported/back.png-b51874ac5720810767dbd1a9ba0d5c74.ctex"
+uid="uid://21710ipjy2hu"
+path="res://.godot/imported/snow_1.png-d31afd1a9b83e84f942864483f251265.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://graphics/buildings/misc_big/1/back.png"
-dest_files=["res://.godot/imported/back.png-b51874ac5720810767dbd1a9ba0d5c74.ctex"]
+source_file="res://graphics/buildings/misc/2/snow_1.png"
+dest_files=["res://.godot/imported/snow_1.png-d31afd1a9b83e84f942864483f251265.ctex"]
 
 [params]
 

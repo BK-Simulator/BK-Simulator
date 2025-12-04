@@ -1,34 +1,39 @@
-[gd_scene load_steps=44 format=3 uid="uid://nx0ygxs7tyme"]
+[gd_scene load_steps=50 format=3 uid="uid://nx0ygxs7tyme"]
 
 [ext_resource type="Script" uid="uid://cr07pcop2o4wl" path="res://scripts/moving_backdrop.gd" id="1_gw13o"]
 [ext_resource type="Texture2D" uid="uid://b8lil1kkqqub8" path="res://graphics/outside/still_sunny_sky.png" id="2_lt5py"]
 [ext_resource type="Script" uid="uid://c6qyb6w5xiq5d" path="res://scripts/building.gd" id="2_me6dy"]
 [ext_resource type="Texture2D" uid="uid://deqcukb5h1bty" path="res://graphics/outside/still_rainy_sky.png" id="3_cbt1l"]
-[ext_resource type="Texture2D" uid="uid://c2tcof14debu3" path="res://graphics/buildings/misc_big/1/back.png" id="3_fdqdj"]
-[ext_resource type="Texture2D" uid="uid://gx1k0xx0p1fb" path="res://graphics/buildings/misc_big/1/front.png" id="4_81u8g"]
+[ext_resource type="Texture2D" uid="uid://c2tcof14debu3" path="res://graphics/buildings/misc/2/back.png" id="3_fdqdj"]
+[ext_resource type="Texture2D" uid="uid://gx1k0xx0p1fb" path="res://graphics/buildings/misc/2/front.png" id="4_81u8g"]
 [ext_resource type="Texture2D" uid="uid://dbrpuncnhrukj" path="res://graphics/outside/drifting_rainy_sky.png" id="4_mph4s"]
 [ext_resource type="Texture2D" uid="uid://whjgafu4kkvq" path="res://graphics/outside/still_road.png" id="5_60f5h"]
-[ext_resource type="Texture2D" uid="uid://21710ipjy2hu" path="res://graphics/buildings/misc_big/1/snow_1.png" id="5_d00r0"]
-[ext_resource type="Texture2D" uid="uid://qtnoooeo55e1" path="res://graphics/buildings/misc_small/1/back.png" id="5_n04an"]
-[ext_resource type="Texture2D" uid="uid://bf36np238cp5w" path="res://graphics/buildings/misc_small/1/front.png" id="6_n7rrd"]
-[ext_resource type="Texture2D" uid="uid://b8yjdowjp2hyt" path="res://graphics/buildings/misc_big/1/snow_2.png" id="6_o3uqf"]
+[ext_resource type="Texture2D" uid="uid://21710ipjy2hu" path="res://graphics/buildings/misc/2/snow_1.png" id="5_d00r0"]
+[ext_resource type="Texture2D" uid="uid://qtnoooeo55e1" path="res://graphics/buildings/misc/1/back.png" id="5_n04an"]
+[ext_resource type="Texture2D" uid="uid://bf36np238cp5w" path="res://graphics/buildings/misc/1/front.png" id="6_n7rrd"]
+[ext_resource type="Texture2D" uid="uid://b8yjdowjp2hyt" path="res://graphics/buildings/misc/2/snow_2.png" id="6_o3uqf"]
 [ext_resource type="Texture2D" uid="uid://bjc4uw7iei8gw" path="res://graphics/outside/moving_road.png" id="6_ydj75"]
 [ext_resource type="Texture2D" uid="uid://d2at8fjhheq8w" path="res://graphics/buildings/bks/burger_kitchen/back.png" id="7_7j055"]
-[ext_resource type="Texture2D" uid="uid://bi4g5kpjk415r" path="res://graphics/buildings/misc_big/1/snow_3.png" id="7_tbatc"]
+[ext_resource type="Texture2D" uid="uid://bi4g5kpjk415r" path="res://graphics/buildings/misc/2/snow_3.png" id="7_tbatc"]
 [ext_resource type="Texture2D" uid="uid://ceg4tb0wfo20s" path="res://graphics/buildings/bks/burger_kitchen/front.png" id="8_1q8x7"]
-[ext_resource type="Texture2D" uid="uid://b7mtnjxqnscm4" path="res://graphics/buildings/misc_small/1/snow_1.png" id="8_pgkft"]
+[ext_resource type="Texture2D" uid="uid://b7mtnjxqnscm4" path="res://graphics/buildings/misc/1/snow_1.png" id="8_pgkft"]
 [ext_resource type="Script" uid="uid://cc0ltwef4x8cg" path="res://scripts/tint_building.gd" id="9_kfrdv"]
 [ext_resource type="Texture2D" uid="uid://c3jp4teskdshw" path="res://graphics/buildings/rare/dank_donuts/back.png" id="9_uuytx"]
 [ext_resource type="Texture2D" uid="uid://d3n4o33sexh8s" path="res://graphics/buildings/rare/dank_donuts/front.png" id="10_6g674"]
 [ext_resource type="Texture2D" uid="uid://c8cmv43ifcu1n" path="res://graphics/buildings/rare/dank_donuts/snow_1.png" id="11_o3uqf"]
-[ext_resource type="Texture2D" uid="uid://chcu77o37hkdo" path="res://graphics/buildings/misc_small/1/snow_2.png" id="11_sut5t"]
+[ext_resource type="Texture2D" uid="uid://chcu77o37hkdo" path="res://graphics/buildings/misc/1/snow_2.png" id="11_sut5t"]
 [ext_resource type="Texture2D" uid="uid://dykwganjll4ov" path="res://graphics/outside/still_snowy_sky.png" id="12_n04an"]
-[ext_resource type="Texture2D" uid="uid://d3fkfm1yrnbis" path="res://graphics/buildings/misc_small/1/snow_3.png" id="12_ojby8"]
+[ext_resource type="Texture2D" uid="uid://d3fkfm1yrnbis" path="res://graphics/buildings/misc/1/snow_3.png" id="12_ojby8"]
 [ext_resource type="Texture2D" uid="uid://clit4q1788gyi" path="res://graphics/buildings/bks/burger_kitchen/snow_1.png" id="12_vfj5a"]
+[ext_resource type="Texture2D" uid="uid://b7jv03axojt4h" path="res://graphics/buildings/misc/3/back.png" id="13_dxp86"]
+[ext_resource type="Texture2D" uid="uid://bi25safhjecg8" path="res://graphics/buildings/misc/3/front.png" id="14_4ahqy"]
 [ext_resource type="Texture2D" uid="uid://33vbfu6nuoym" path="res://graphics/outside/drifting_snowy_sky.png" id="14_n7rrd"]
+[ext_resource type="Texture2D" uid="uid://c6knscqxqhg6e" path="res://graphics/buildings/misc/3/snow_1.png" id="15_60n6g"]
 [ext_resource type="Shader" uid="uid://cmu8ryj2t8qw4" path="res://shaders/rain.gdshader" id="15_fdqdj"]
+[ext_resource type="Texture2D" uid="uid://bmhn6eaqyn26a" path="res://graphics/buildings/misc/3/snow_2.png" id="16_lhweg"]
 [ext_resource type="Texture2D" uid="uid://ck5jf65a87iso" path="res://graphics/outside/moving_snow_bg.png" id="17_7j055"]
 [ext_resource type="Texture2D" uid="uid://djrvgns5pqeul" path="res://graphics/buildings/rare/krispy_kookies/back.png" id="17_plj07"]
+[ext_resource type="Texture2D" uid="uid://cq13unoti6gtv" path="res://graphics/buildings/misc/3/snow_3.png" id="17_yg13f"]
 [ext_resource type="Texture2D" uid="uid://bxwlk2nqkcc7c" path="res://graphics/outside/moving_snow_fg.png" id="18_1q8x7"]
 [ext_resource type="Texture2D" uid="uid://lff10s556rlt" path="res://graphics/buildings/rare/krispy_kookies/front.png" id="18_lg6h8"]
 [ext_resource type="Texture2D" uid="uid://d3a3slctah456" path="res://graphics/buildings/rare/krispy_kookies/snow_1.png" id="19_0kskx"]
@@ -41,7 +46,7 @@ script = ExtResource("2_me6dy")
 back_tex = ExtResource("3_fdqdj")
 front_tex = ExtResource("4_81u8g")
 snow_texs = Array[Texture2D]([ExtResource("5_d00r0"), ExtResource("6_o3uqf"), ExtResource("7_tbatc")])
-weight = 50
+weight = 100
 metadata/_custom_type_script = "uid://c6qyb6w5xiq5d"
 
 [sub_resource type="Resource" id="Resource_pgkft"]
@@ -49,7 +54,15 @@ script = ExtResource("2_me6dy")
 back_tex = ExtResource("5_n04an")
 front_tex = ExtResource("6_n7rrd")
 snow_texs = Array[Texture2D]([ExtResource("8_pgkft"), ExtResource("11_sut5t"), ExtResource("12_ojby8")])
-weight = 50
+weight = 100
+metadata/_custom_type_script = "uid://c6qyb6w5xiq5d"
+
+[sub_resource type="Resource" id="Resource_skyyj"]
+script = ExtResource("2_me6dy")
+back_tex = ExtResource("13_dxp86")
+front_tex = ExtResource("14_4ahqy")
+snow_texs = Array[Texture2D]([ExtResource("15_60n6g"), ExtResource("16_lhweg"), ExtResource("17_yg13f")])
+weight = 100
 metadata/_custom_type_script = "uid://c6qyb6w5xiq5d"
 
 [sub_resource type="Resource" id="Resource_uuytx"]
@@ -108,7 +121,7 @@ offset_bottom = 180.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_gw13o")
-buildings = Array[ExtResource("2_me6dy")]([SubResource("Resource_d00r0"), SubResource("Resource_pgkft"), SubResource("Resource_uuytx"), SubResource("Resource_b8c2y"), SubResource("Resource_1frde")])
+buildings = Array[ExtResource("2_me6dy")]([SubResource("Resource_d00r0"), SubResource("Resource_pgkft"), SubResource("Resource_skyyj"), SubResource("Resource_uuytx"), SubResource("Resource_b8c2y"), SubResource("Resource_1frde")])
 bk_buildings = Array[ExtResource("2_me6dy")]([SubResource("Resource_vfj5a")])
 subvp = NodePath("MovingBackdrop")
 moving_nodes = [NodePath("MovingBackdrop/MovingRoad"), NodePath("MovingBackdrop/MovingSnowBG"), NodePath("MovingBackdrop/MovingSnowFG"), NodePath("MovingBackdrop/Weather")]
