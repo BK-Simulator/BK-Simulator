@@ -1,4 +1,4 @@
-[gd_scene load_steps=40 format=3 uid="uid://nx0ygxs7tyme"]
+[gd_scene load_steps=44 format=3 uid="uid://nx0ygxs7tyme"]
 
 [ext_resource type="Script" uid="uid://cr07pcop2o4wl" path="res://scripts/moving_backdrop.gd" id="1_gw13o"]
 [ext_resource type="Texture2D" uid="uid://b8lil1kkqqub8" path="res://graphics/outside/still_sunny_sky.png" id="2_lt5py"]
@@ -32,6 +32,9 @@
 [ext_resource type="Texture2D" uid="uid://bxwlk2nqkcc7c" path="res://graphics/outside/moving_snow_fg.png" id="18_1q8x7"]
 [ext_resource type="Texture2D" uid="uid://lff10s556rlt" path="res://graphics/buildings/rare/krispy_kookies/front.png" id="18_lg6h8"]
 [ext_resource type="Texture2D" uid="uid://d3a3slctah456" path="res://graphics/buildings/rare/krispy_kookies/snow_1.png" id="19_0kskx"]
+[ext_resource type="Texture2D" uid="uid://bt6ooedygxa3x" path="res://graphics/buildings/rare/pizza_hat/back.png" id="20_b8c2y"]
+[ext_resource type="Texture2D" uid="uid://c706jpg5t7gg5" path="res://graphics/buildings/rare/pizza_hat/front.png" id="21_4eg4b"]
+[ext_resource type="Texture2D" uid="uid://bwi8dycm3fuqe" path="res://graphics/buildings/rare/pizza_hat/snow_1.png" id="22_1hkv2"]
 
 [sub_resource type="Resource" id="Resource_d00r0"]
 script = ExtResource("2_me6dy")
@@ -67,6 +70,15 @@ snow_texs = Array[Texture2D]([ExtResource("19_0kskx")])
 weight = 1
 metadata/_custom_type_script = "uid://cc0ltwef4x8cg"
 
+[sub_resource type="Resource" id="Resource_1frde"]
+script = ExtResource("9_kfrdv")
+tint = Color(1, 0.166667, 0, 1)
+back_tex = ExtResource("20_b8c2y")
+front_tex = ExtResource("21_4eg4b")
+snow_texs = Array[Texture2D]([ExtResource("22_1hkv2")])
+weight = 1
+metadata/_custom_type_script = "uid://cc0ltwef4x8cg"
+
 [sub_resource type="Resource" id="Resource_vfj5a"]
 script = ExtResource("9_kfrdv")
 tint = Color(0.651, 0.64, 0.8, 1)
@@ -96,7 +108,7 @@ offset_bottom = 180.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_gw13o")
-buildings = Array[ExtResource("2_me6dy")]([SubResource("Resource_d00r0"), SubResource("Resource_pgkft"), SubResource("Resource_uuytx"), SubResource("Resource_b8c2y")])
+buildings = Array[ExtResource("2_me6dy")]([SubResource("Resource_d00r0"), SubResource("Resource_pgkft"), SubResource("Resource_uuytx"), SubResource("Resource_b8c2y"), SubResource("Resource_1frde")])
 bk_buildings = Array[ExtResource("2_me6dy")]([SubResource("Resource_vfj5a")])
 subvp = NodePath("MovingBackdrop")
 moving_nodes = [NodePath("MovingBackdrop/MovingRoad"), NodePath("MovingBackdrop/MovingSnowBG"), NodePath("MovingBackdrop/MovingSnowFG"), NodePath("MovingBackdrop/Weather")]
