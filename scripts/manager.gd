@@ -4,8 +4,6 @@ extends PanelContainer
 @export var text_scene: TextScene
 @export var game: BKSim_Game
 
-const end_names: Array[String] = ["EmilyV"]
-
 const FADE_DUR := 1.5
 var in_transition: bool = false
 
@@ -35,25 +33,6 @@ func fade_to_opening() -> void:
 	tw.parallel().tween_property(game, "modulate:a", 1.0, FADE_DUR)
 	await tw.finished
 	text_scene.set_visible(false)
-	in_transition = false
-	transition_end.emit()
-
-func fade_to_ending(done: bool) -> void:
-	if in_transition: await transition_end
-	in_transition = true
-	var tw := create_tween()
-	tw.tween_property(game, "modulate:a", 0.0, FADE_DUR)
-	await tw.finished
-	if done:
-		await text_scene.play("Oh, finally! '%s' sent me the item I was waiting for.\nNow I can keep playing Archipelago!" % pick_username(), 4.0, 10.0)
-	else:
-		await text_scene.play("Still in BK Mode...", 2.0, 2.0)
-	tw = create_tween()
-	tw.tween_property(text_scene, "modulate:a", 0.0, FADE_DUR)
-	tw.parallel().tween_property(game, "modulate:a", 1.0, FADE_DUR)
-	await tw.finished
-	text_scene.set_visible(false)
-	game.paused = false
 	in_transition = false
 	transition_end.emit()
 
@@ -88,14 +67,3 @@ func _on_back_to_menu_pressed() -> void:
 	randomize_wallpaper()
 	await fade_to_menu()
 	Archipelago.ap_disconnect()
-
-func pick_username() -> String:
-	var available_names: Array[String]
-	available_names.assign(end_names)
-
-	for player in Archipelago.conn.players:
-		if player.slot == Archipelago.conn.player_id:
-			continue
-		available_names.append(player.get_name())
-
-	return available_names.pick_random()

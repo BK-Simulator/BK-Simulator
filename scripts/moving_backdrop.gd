@@ -16,9 +16,21 @@ var direction := -1
 var bk_mode := false
 var weather: BKSim_Game.Weather
 
+func random_building(bk: bool) -> Building:
+	var arr: Array[Building] = (bk_buildings if bk else buildings)
+	var total_weight: int = 0
+	for b in arr:
+		total_weight += b.weight
+	var picked: int = randi_range(0, total_weight-1)
+	for b in arr:
+		if picked < b.weight:
+			return b
+		picked -= b.weight
+	push_error("Didn't find the picked building?")
+	return arr[0]
+
 func add_building() -> void:
-	var blueprint: Building = (bk_buildings if bk_mode else buildings).pick_random() as Building
-	var building := blueprint.instantiate(weather == BKSim_Game.Weather.SNOW)
+	var building := random_building(bk_mode).instantiate(weather == BKSim_Game.Weather.SNOW)
 	if bk_mode:
 		bk_building = building
 	bk_mode = false
@@ -49,7 +61,9 @@ func remove_building(building: TextureRect) -> void:
 	building.queue_free()
 
 func move_by(amount: float) -> void:
-	amount = abs(amount) * direction
+	# minimum 0.5 magnitude, otherwise it visually jitters
+	var min_magnitude: float = 1.0 if weather == BKSim_Game.Weather.SUN else 0.5
+	amount = max(min_magnitude, abs(amount) / 2) * direction
 	for node in moving_nodes:
 		node.position.x += amount
 		if node.position.x > 0:

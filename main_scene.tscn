@@ -379,6 +379,7 @@ layout_mode = 2
 size_flags_vertical = 8
 
 [node name="TextCutscene" type="Control" parent="." node_paths=PackedStringArray("lbl", "spinner")]
+visible = false
 layout_mode = 2
 mouse_filter = 2
 script = ExtResource("12_671wp")
@@ -402,8 +403,6 @@ theme_override_styles/panel = ExtResource("4_wr18j")
 
 [node name="Label" type="Label" parent="TextCutscene/PanelContainer"]
 layout_mode = 2
-text = "Damn... BK'd again.
-Guess it's time to grab lunch."
 horizontal_alignment = 1
 
 [node name="Spinner" type="Sprite2D" parent="TextCutscene"]
@@ -422,7 +421,6 @@ vframes = 2
 [connection signal="pressed" from="Menu (Home)/Control/CenterContainer/MarginContainer/Menu_Connect/ConnectBox/VBoxContainer/Connect" to="Menu (Home)" method="_on_connect_pressed"]
 [connection signal="pressed" from="Menu (Home)/Control/CenterContainer/MarginContainer/Menu_Connect/ConnectBox/VBoxContainer/Back" to="Menu (Home)" method="_on_back_pressed"]
 [connection signal="open_game" from="Game" to="." method="fade_to_game"]
-[connection signal="play_ending" from="Game" to="." method="fade_to_ending"]
 [connection signal="play_opening" from="Game" to="." method="fade_to_opening"]
 [connection signal="return_to_menu" from="Game" to="." method="_on_back_to_menu_pressed"]
 [connection signal="pressed" from="Game/MarginContainer/VBoxContainer/HBoxContainer/ToggleStats" to="Game" method="_on_toggle_stats_pressed"]

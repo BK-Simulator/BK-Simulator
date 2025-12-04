@@ -1,5 +1,7 @@
 class_name BKSim_Game extends Control
 
+const end_names: Array[String] = ["EmilyV"]
+
 @export_group("Nodes")
 @export var runwalk_label: Label
 @export var speed_label: Label
@@ -21,7 +23,6 @@ class_name BKSim_Game extends Control
 
 signal return_to_menu
 signal play_opening
-signal play_ending(done: bool)
 signal open_game
 
 signal unpaused
@@ -63,6 +64,7 @@ var remaining_locations: int = -1
 var connected_key: String
 var in_focus: bool = false
 var paused: bool = true : set = set_paused
+var goaled: bool = false
 
 func set_paused(val: bool) -> void:
 	paused = val
@@ -145,6 +147,7 @@ func on_connect(conn: ConnectionInfo, _json: Dictionary) -> void:
 	conn.force_scout_all()
 	refresh()
 	refr_locs()
+	conn.retrieve("_read_client_status_%d_%d" % [conn.team_id, conn.player_id], check_status)
 	in_focus = get_window().has_focus()
 	paused = false
 
@@ -250,15 +253,6 @@ func _physics_process(_delta: float) -> void:
 		if current_position >= bk_position:
 			current_position = bk_position
 			#if not in_focus: return
-			var start_key := (current_weather as int) * 100 + 1
-			var found_loc := -1
-			for loc in range(start_key, start_key + locs_per_weather):
-				if not Archipelago.conn.slot_locations[loc]:
-					Archipelago.collect_location(loc)
-					found_loc = loc
-					break
-			post_cutscene_direction = -1
-			save_to_server()
 			paused = true
 			moving_backdrop.bk_mode = true
 			while not moving_backdrop.bk_building or (moving_backdrop.bk_building.position.x + moving_backdrop.bk_building.size.x / 2.0 > 320):
@@ -266,11 +260,23 @@ func _physics_process(_delta: float) -> void:
 				var dist := minf(limit, dx * 2)
 				moving_backdrop.move_by(dist)
 				await get_tree().physics_frame
-			Archipelago.conn.scout(found_loc, 0, popup_found)
-			await unpaused
-			paused = false
-			set_direction(-1)
-			save_to_server()
+			var start_key := (current_weather as int) * 100 + 1
+			var found_loc := -1
+			for loc in range(start_key, start_key + locs_per_weather):
+				if not Archipelago.conn.slot_locations[loc]:
+					Archipelago.collect_location(loc)
+					# instantly save the other direction to the server, to avoid well-timed exiting from sending the NEXT location
+					post_cutscene_direction = -1
+					save_to_server()
+					found_loc = loc
+					break
+			if found_loc > -1:
+				Archipelago.conn.scout(found_loc, 0, popup_found)
+			else: # Final location got collected out while you were already en-route?
+				popup_found(null)
+				await unpaused
+				set_direction(-1)
+				save_to_server()
 		else:
 			moving_backdrop.move_by(dx)
 	else:
@@ -278,15 +284,14 @@ func _physics_process(_delta: float) -> void:
 		if current_position <= 0:
 			current_position = 0
 			#if not in_focus: return
-			if remaining_locations == 0:
-				Archipelago.set_client_status(AP.ClientStatus.CLIENT_GOAL)
 			current_weather = Weather.NONE
 			set_direction(1)
 			save_to_server()
-			paused = true
-			play_ending.emit(remaining_locations == 0)
-			await get_tree().create_timer(1.5).timeout
-			init_backdrop(true)
+			if remaining_locations == 0:
+				goal()
+			else:
+				paused = true
+				play_get_home(false)
 		else:
 			moving_backdrop.move_by(dx)
 
@@ -302,7 +307,9 @@ func _on_toggle_stats_pressed() -> void:
 
 func popup_found(itm: NetworkItem) -> void:
 	var msg: String
-	if itm.dest_player_id == Archipelago.conn.player_id:
+	if not itm:
+		msg = "Your meal came with no bonus."
+	elif itm.dest_player_id == Archipelago.conn.player_id:
 		msg = "Your meal came with a bonus!\nFound your own '%s'!" % itm.get_name()
 	else:
 		msg = "Your meal came with a bonus!\nFound %s's '%s'!" % [Archipelago.conn.get_player_name(itm.dest_player_id), itm.get_name()]
@@ -310,4 +317,48 @@ func popup_found(itm: NetworkItem) -> void:
 	var tw := create_tween()
 	tw.tween_property(text_scene, "modulate:a", 0.0, 1.0)
 	await tw.finished
+	set_direction(-1)
+	save_to_server()
 	set_paused(false)
+
+func goal() -> void:
+	current_position = 0
+	current_weather = Weather.NONE
+	set_direction(1)
+	if goaled: return
+	goaled = true
+	Archipelago.set_client_status(AP.ClientStatus.CLIENT_GOAL)
+	paused = true
+	play_get_home(true)
+
+func check_status(status: AP.ClientStatus) -> void:
+	goaled = status == AP.ClientStatus.CLIENT_GOAL
+	if remaining_locations == 0 and (current_position <= 0 or goaled):
+		goal()
+
+func play_get_home(done: bool) -> void:
+	var tw := create_tween()
+	tw.tween_property(self, "modulate:a", 0.0, FADE_DUR)
+	await tw.finished
+	init_backdrop(true)
+	if done:
+		await text_scene.play("Oh, finally! '%s' sent me the item I was waiting for.\nNow I can keep playing Archipelago!" % pick_username(), 4.0, 10.0)
+	else:
+		await text_scene.play("Still in BK Mode...", 2.0, 2.0)
+	tw = create_tween()
+	tw.tween_property(text_scene, "modulate:a", 0.0, FADE_DUR)
+	tw.parallel().tween_property(self, "modulate:a", 1.0, FADE_DUR)
+	await tw.finished
+	text_scene.set_visible(false)
+	paused = false
+
+func pick_username() -> String:
+	var available_names: Array[String]
+	available_names.assign(end_names)
+
+	for player in Archipelago.conn.players:
+		if player.slot == Archipelago.conn.player_id:
+			continue
+		available_names.append(player.get_name())
+
+	return available_names.pick_random()

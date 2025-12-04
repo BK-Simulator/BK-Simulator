@@ -1,12 +1,12 @@
 [gd_scene load_steps=9 format=3 uid="uid://ciysvlcp7d35f"]
 
 [ext_resource type="Shader" uid="uid://4vc34c20vj8l" path="res://shaders/recolor_hue.gdshader" id="1_vvxqx"]
-[ext_resource type="Texture2D" uid="uid://d0x16vpyc5o6w" path="res://graphics/basic_wallpaper.png" id="2_cdpnt"]
-[ext_resource type="Texture2D" uid="uid://dmf6txqmnxgfe" path="res://graphics/basic_flooring.png" id="4_6i7po"]
-[ext_resource type="Texture2D" uid="uid://i17vaae5fd4g" path="res://graphics/basic_desk.png" id="5_e8087"]
-[ext_resource type="Texture2D" uid="uid://dv84sxfafkjot" path="res://graphics/basic_pc.png" id="6_b3bg0"]
-[ext_resource type="Texture2D" uid="uid://dq08vnalibrd0" path="res://graphics/basic_chair.png" id="7_8umsc"]
-[ext_resource type="Texture2D" uid="uid://dcrvvlayola0l" path="res://graphics/basic_window.png" id="8_7kmkt"]
+[ext_resource type="Texture2D" uid="uid://d0x16vpyc5o6w" path="res://graphics/house/basic_wallpaper.png" id="2_cdpnt"]
+[ext_resource type="Texture2D" uid="uid://dmf6txqmnxgfe" path="res://graphics/house/basic_flooring.png" id="4_6i7po"]
+[ext_resource type="Texture2D" uid="uid://i17vaae5fd4g" path="res://graphics/house/basic_desk.png" id="5_e8087"]
+[ext_resource type="Texture2D" uid="uid://dv84sxfafkjot" path="res://graphics/house/basic_pc.png" id="6_b3bg0"]
+[ext_resource type="Texture2D" uid="uid://dq08vnalibrd0" path="res://graphics/house/basic_chair.png" id="7_8umsc"]
+[ext_resource type="Texture2D" uid="uid://dcrvvlayola0l" path="res://graphics/house/basic_window.png" id="8_7kmkt"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_gyfs4"]
 shader = ExtResource("1_vvxqx")

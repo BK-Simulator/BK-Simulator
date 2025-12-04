@@ -10,11 +10,14 @@ var rate := 0.0
 var start_delay := 0.0
 var delay_left := 0.0
 
+func _ready() -> void:
+	modulate.a = 0.0
+	visible = false
+
 func play(text: String, dur := 3.0, delay := 3.0) -> void:
 	lbl.text = text
 	lbl.visible_characters = 0
 	lbl.visible_ratio = 0.0
-	visible = true
 	modulate.a = 1.0
 	spinner.visible = false
 	rate = 1.0 / dur
@@ -24,6 +27,11 @@ func play(text: String, dur := 3.0, delay := 3.0) -> void:
 	await delay_done
 
 func _process(delta: float) -> void:
+	if visible and modulate.a <= 0.0:
+		visible = false
+	elif modulate.a > 0.0 and not visible:
+		visible = true
+
 	if rate >= 0.0:
 		lbl.visible_ratio += rate * delta
 		if lbl.visible_ratio >= 1.0:
@@ -43,6 +51,7 @@ func reset() -> void:
 	lbl.text = ""
 	lbl.visible_characters = 0
 	spinner.visible = false
+	visible = false
 
 func _on_panel_container_gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
