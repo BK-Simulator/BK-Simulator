@@ -10,6 +10,8 @@
 - Choose which weather to walk to BK in.
 - Each time you reach BK, you send a check. You do still need to walk home after, before you can start your next trip!
 
+<iframe frameborder="0" src="https://itch.io/embed/4088465?linkback=true" width="552" height="167"><a href="https://emilyv99.itch.io/bk-simulator">BK Simulator by Emily</a></iframe>
+
 ## Settings
 - You choose how many locations are in the game. Collecting ALL of them is required as the goal.
 - You can adjust the distance to the nearest BK at the start. This will heavily control the speed / length of the game.

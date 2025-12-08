@@ -3,6 +3,8 @@
 ## What is BK Simulator?
 You have to walk to BK, in various weather conditions. Each time you reach BK is a check. Collect every check (and return home!) to goal.
 
+<iframe frameborder="0" src="https://itch.io/embed/4088465?linkback=true" width="552" height="167"><a href="https://emilyv99.itch.io/bk-simulator">BK Simulator by Emily</a></iframe>
+
 ## Settings
 [Options Page](../player-options)
 - You choose how many locations are in the game. Collecting ALL of them is required as the goal.
