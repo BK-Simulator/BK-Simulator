@@ -19,7 +19,7 @@ class BKSimWorld(World):
     location_name_to_id = locations.location_name_to_id
     item_name_to_id = items.item_name_to_id
 
-    origin_region_name = RID.HOME
+    origin_region_name = str(RID.HOME)
 
     def __init__(self, multiworld: MultiWorld, player: int):
         super().__init__(multiworld, player)
@@ -41,6 +41,7 @@ class BKSimWorld(World):
             'LocsPerWeather': self.options.locs_per_weather.value,
             'StartDistance': self.options.start_distance.value,
             'SpeedPerUpgrade': self.options.speed_per_upgrade.value,
+            'DeathLink': self.options.death_link.value,
         }
 
     def get_region(self, region_name: str) -> Region:
