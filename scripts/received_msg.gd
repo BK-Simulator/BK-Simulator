@@ -5,7 +5,7 @@ var time_left: float
 var paused := true
 
 func _ready() -> void:
-	time_left = 5.0 if OS.is_debug_build() else 30.0
+	time_left = 30.0
 func _process(delta: float) -> void:
 	if paused: return
 	if time_left <= 0: return

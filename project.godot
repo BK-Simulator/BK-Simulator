@@ -17,6 +17,10 @@ run/main_scene="uid://c3dc0h14m5kem"
 config/features=PackedStringArray("4.4", "Mobile")
 config/icon="res://icon.svg"
 
+[audio]
+
+buses/default_bus_layout="uid://bih2m7ff3vf1w"
+
 [autoload]
 
 Archipelago="*res://godot_ap/autoloads/archipelago.tscn"
@@ -33,6 +37,10 @@ window/stretch/aspect="ignore"
 [filesystem]
 
 import/blender/enabled=false
+
+[global_group]
+
+MessageQueues=""
 
 [gui]
 

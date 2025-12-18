@@ -20,6 +20,8 @@ const end_names: Array[String] = ["EmilyV"]
 @export var stats: Container
 @export var text_scene: TextScene
 @export var settings_panel: MarginContainer
+@export var rain_sfx: FadeSFXPlayer
+@export var deathlink_checkbox: CheckBox
 @export_group("")
 
 signal return_to_menu
@@ -34,38 +36,55 @@ const FADE_DUR := 1.0
 enum Weather {
 	NONE = -1, SUN, RAIN, SNOW
 }
+enum State {
+	HOME, TO_BK_RIGHT, TO_BK_LEFT, FROM_BK, GOAL, DYING, HOSPITAL
+}
 
+const AUTOSAVE_DURATION := 60.0 # 1 minute
 # Stats, which change when you get items
 var run_speed: float
 var snow_speed: float
 var bk_position: int
-# slot data
+
+# slot data values, updated on connection
 var locs_per_weather: int
 var bk_start_miles: int
 var speed_per_upgrade: int
-# other
+
+# saved data, saved to the server
 var current_position: float :
 	set(val):
 		current_position = val
 		progress_label.text = "%.2f" % (current_position / MILES)
 var current_weather: Weather :
 	set(val):
+		if val != current_weather:
+			weather_changed = true
 		current_weather = val
-		if val != Weather.NONE:
-			for node in moving_backdrop.sunny_nodes:
-				node.set_visible(val == Weather.SUN)
-			for node in moving_backdrop.rainy_nodes:
-				node.set_visible(val == Weather.RAIN)
-			for node in moving_backdrop.snowy_nodes:
-				node.set_visible(val == Weather.SNOW)
-			moving_backdrop.weather = val
+var post_cutscene_state: State = State.HOME
+
+# other live data
+var current_state: State = State.HOME
 var direction: int = 1
-var post_cutscene_direction: int = 1
 var remaining_locations: int = -1
+
+var autosave_timer: float = AUTOSAVE_DURATION
 var connected_key: String
 var in_focus: bool = false
 var paused: bool = true : set = set_paused
 var goaled: bool = false
+var weather_changed := false
+
+# DeathLink data
+var dying_source: String
+var dying_cause: String
+var car: TextureRect
+
+func get_deathlink() -> bool:
+	return Archipelago.is_deathlink()
+func set_deathlink(val: bool) -> void:
+	Archipelago.set_deathlink(val)
+	deathlink_checkbox.set_pressed_no_signal(val)
 
 func set_paused(val: bool) -> void:
 	paused = val
@@ -82,6 +101,7 @@ func load_slot_data(conn: ConnectionInfo) -> void:
 	locs_per_weather = conn.slot_data["LocsPerWeather"]
 	bk_start_miles = conn.slot_data["StartDistance"]
 	speed_per_upgrade = conn.slot_data["SpeedPerUpgrade"]
+	set_deathlink(conn.slot_data.get("DeathLink", false))
 
 func refresh() -> void:
 	runwalk_label.text = "%s Speed:" % ("Walk" if run_speed < RUN_SPEED else "Run")
@@ -140,9 +160,12 @@ func on_connect(conn: ConnectionInfo, _json: Dictionary) -> void:
 	message_queue.queue_message("Click to instantly dismiss messages.")
 	conn.obtained_item.connect(item_get)
 	conn.refresh_items.connect(item_refr)
+	conn.deathlink.connect(on_linked_death)
 	load_slot_data(conn)
 	reset_item()
+	set_state(State.HOME)
 	current_position = 0
+	autosave_timer = 60.0
 	current_weather = Weather.NONE
 	connected_key = "BK_Simulator_%d" % conn.player_id
 	conn.retrieve(connected_key, resume_from_server)
@@ -164,6 +187,8 @@ func item_get(item: NetworkItem) -> void:
 			snow_button.focus_mode = FOCUS_ALL
 		"NEW LOCATION":
 			bk_position /= 2
+			if current_state == State.TO_BK_RIGHT and current_position >= bk_position:
+				current_state = State.TO_BK_LEFT # turn around, it's behind you now!
 	refresh()
 
 func item_refr(items: Array[NetworkItem]) -> void:
@@ -180,20 +205,32 @@ func resume_from_server(data: Variant) -> void:
 		data = {
 			"pos": 0,
 			"weather": Weather.NONE,
-			"dir": 1,
+			"state": State.HOME,
 		}
 	if data is Dictionary:
 		if data.is_empty(): return
 		current_position = data["pos"]
 		current_weather = data["weather"] as Weather
-		set_direction(data["dir"])
+		if data.has("dir"): # old version
+			if current_weather == Weather.NONE:
+				set_state(State.HOME)
+			else:
+				set_state(State.TO_BK_RIGHT if data["dir"] > 0 else State.FROM_BK)
+		else: # new version
+			set_state(data["state"] as State)
+			match current_state:
+				State.DYING, State.HOSPITAL: # Resume from home if quitting during deathlink death
+					set_state(State.HOME)
+		if data.has("deathlink"):
+			set_deathlink(data["deathlink"])
 		init_backdrop(true)
-		if current_weather == Weather.NONE and remaining_locations > 0:
+		if current_state == State.HOME and remaining_locations > 0:
 			play_opening.emit()
 		else:
 			open_game.emit()
 
 func save_to_server() -> void:
+	if Archipelago.is_not_connected(): return
 	Archipelago.send_command("Set", {
 		"key": connected_key,
 		"default": {},
@@ -202,7 +239,8 @@ func save_to_server() -> void:
 			{"operation": "replace", "value": {
 				"pos": roundi(current_position),
 				"weather": current_weather as int,
-				"dir": post_cutscene_direction,
+				"state": post_cutscene_state,
+				"deathlink": get_deathlink(),
 			}}
 		]
 	})
@@ -211,7 +249,7 @@ func _on_embark(weather: int) -> void:
 	if current_weather == Weather.NONE:
 		current_weather = weather as Weather
 		current_position = 0
-		set_direction(1)
+		set_state(State.TO_BK_RIGHT)
 		init_backdrop()
 
 func init_backdrop(instant := false) -> void:
@@ -237,17 +275,37 @@ func _notification(what: int) -> void:
 	elif what == NOTIFICATION_APPLICATION_FOCUS_OUT:
 		in_focus = false
 
-func _physics_process(_delta: float) -> void:
+func _physics_process(delta: float) -> void:
+	if weather_changed:
+		if current_weather == Weather.RAIN:
+			rain_sfx.fade_start()
+		else:
+			rain_sfx.fade_end()
+		if current_weather != Weather.NONE:
+			for node in moving_backdrop.sunny_nodes:
+				node.set_visible(current_weather == Weather.SUN)
+			for node in moving_backdrop.rainy_nodes:
+				node.set_visible(current_weather == Weather.RAIN)
+			for node in moving_backdrop.snowy_nodes:
+				node.set_visible(current_weather == Weather.SNOW)
+			moving_backdrop.weather = current_weather
+		weather_changed = false
 	if not in_focus: return
 	if paused: return
+	if current_state in [State.HOME, State.GOAL]: return
 	if current_weather == Weather.NONE: return
+
+	autosave_timer -= delta
+	if autosave_timer <= 0.0:
+		# periodically save incase of crash / power outage / etc
+		save_to_server.call_deferred()
+		autosave_timer = AUTOSAVE_DURATION
+
 	var dx := get_speed() * direction
 	current_position += dx * 1
-	if roundi(current_position) % 50 == 0:
-		save_to_server()
-	if direction > 0:
-		#current_position = bk_position
-		if current_position >= bk_position:
+	if current_state in [State.TO_BK_RIGHT, State.TO_BK_LEFT]:
+		var at_goal := (current_position >= bk_position) if direction > 0 else (current_position <= bk_position)
+		if at_goal:
 			current_position = bk_position
 			#if not in_focus: return
 			paused = true
@@ -262,8 +320,8 @@ func _physics_process(_delta: float) -> void:
 			for loc in range(start_key, start_key + locs_per_weather):
 				if not Archipelago.conn.slot_locations[loc]:
 					Archipelago.collect_location(loc)
-					# instantly save the other direction to the server, to avoid well-timed exiting from sending the NEXT location
-					post_cutscene_direction = -1
+					# instantly save the return state to the server, to avoid well-timed exiting from sending the NEXT location
+					post_cutscene_state = State.FROM_BK
 					save_to_server()
 					found_loc = loc
 					break
@@ -272,17 +330,16 @@ func _physics_process(_delta: float) -> void:
 			else: # Final location got collected out while you were already en-route?
 				popup_found(null)
 				await unpaused
-				set_direction(-1)
+				set_state(State.FROM_BK)
 				save_to_server()
 		else:
 			moving_backdrop.move_by(dx)
-	else:
+	elif current_state == State.FROM_BK:
 		#current_position = minf(current_position, 10 * MILES)
 		if current_position <= 0:
 			current_position = 0
 			#if not in_focus: return
-			current_weather = Weather.NONE
-			set_direction(1)
+			set_state(State.HOME)
 			save_to_server()
 			if remaining_locations == 0:
 				goal()
@@ -291,13 +348,38 @@ func _physics_process(_delta: float) -> void:
 				play_get_home(false)
 		else:
 			moving_backdrop.move_by(dx)
+	elif current_state == State.DYING:
+		var hit := false
+		if not moving_backdrop.killer_car:
+			hit = true
+		elif direction > 0:
+			if moving_backdrop.killer_car.get_rect().get_center().x < MovingBackdrop.WIDTH / 2.0:
+				hit = true
+		else:
+			if moving_backdrop.killer_car.get_rect().get_center().x > MovingBackdrop.WIDTH / 2.0:
+				hit = true
+		if hit:
+			# TODO play thud sfx
+			set_state(State.HOME)
+			play_deathlink_scene()
+	else:
+		AP.log("State '%d' is invalid!" % current_state)
+		assert(false)
+func set_state(state: State) -> void:
+	post_cutscene_state = state
+	if current_state != state:
+		current_state = state
 
-func set_direction(dir: int) -> void:
-	assert(dir == 1 or dir == -1)
-	post_cutscene_direction = dir
-	if direction != dir:
-		direction = dir
-		moving_backdrop.swap_direction()
+		var dir := 1
+		match current_state:
+			State.FROM_BK, State.TO_BK_LEFT:
+				dir = -1
+			State.HOME:
+				current_weather = Weather.NONE
+				current_position = 0
+		if direction != dir:
+			direction = dir
+			moving_backdrop.swap_direction()
 
 func popup_found(itm: NetworkItem) -> void:
 	var msg: String
@@ -311,14 +393,14 @@ func popup_found(itm: NetworkItem) -> void:
 	var tw := create_tween()
 	tw.tween_property(text_scene, "modulate:a", 0.0, 1.0)
 	await tw.finished
-	set_direction(-1)
+	set_state(State.FROM_BK)
 	save_to_server()
 	set_paused(false)
 
 func goal() -> void:
 	current_position = 0
 	current_weather = Weather.NONE
-	set_direction(1)
+	set_state(State.GOAL)
 	if goaled: return
 	goaled = true
 	Archipelago.set_client_status(AP.ClientStatus.CLIENT_GOAL)
@@ -339,6 +421,19 @@ func play_get_home(done: bool) -> void:
 		await text_scene.play("Oh, finally! '%s' sent me the item I was waiting for.\nNow I can keep playing Archipelago!" % pick_username(), 4.0, 10.0)
 	else:
 		await text_scene.play("Still in BK Mode...", 2.0, 2.0)
+	tw = create_tween()
+	tw.tween_property(text_scene, "modulate:a", 0.0, FADE_DUR)
+	tw.parallel().tween_property(self, "modulate:a", 1.0, FADE_DUR)
+	await tw.finished
+	text_scene.set_visible(false)
+	paused = false
+
+func play_deathlink_scene() -> void:
+	var tw := create_tween()
+	tw.tween_property(self, "modulate:a", 0.0, FADE_DUR)
+	await tw.finished
+	init_backdrop(true)
+	await text_scene.play("Ouch... %s needs to watch where they are going!\n(%s)" % [dying_source, dying_cause], 2.0, 30.0)
 	tw = create_tween()
 	tw.tween_property(text_scene, "modulate:a", 0.0, FADE_DUR)
 	tw.parallel().tween_property(self, "modulate:a", 1.0, FADE_DUR)
@@ -370,3 +465,13 @@ func _on_toggle_settings_pressed() -> void:
 
 func _on_pin_window_toggled(toggled_on: bool) -> void:
 	get_window().always_on_top = toggled_on
+
+func on_linked_death(source: String, cause: String, _json: Dictionary = {}) -> void:
+	if current_state in [State.HOME, State.DYING, State.GOAL]:
+		return # ignore deathlinks in these states
+	dying_source = source
+	dying_cause = cause
+	moving_backdrop.add_car(true)
+	assert(moving_backdrop.killer_car)
+	set_state(State.DYING)
+	save_to_server()
