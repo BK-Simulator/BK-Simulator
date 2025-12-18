@@ -1,0 +1,563 @@
+[gd_scene load_steps=22 format=3 uid="uid://c3dc0h14m5kem"]
+
+[ext_resource type="Script" uid="uid://clt6f0826b4em" path="res://scripts/main_menu.gd" id="1_7ycvg"]
+[ext_resource type="Script" uid="uid://xtkcht8bmaja" path="res://scripts/manager.gd" id="1_qwutr"]
+[ext_resource type="PackedScene" uid="uid://ciysvlcp7d35f" path="res://background.tscn" id="3_hq1ik"]
+[ext_resource type="StyleBox" uid="uid://cxit8vio6x158" path="res://resources/faded_panel_sb.tres" id="4_wr18j"]
+[ext_resource type="PackedScene" uid="uid://nx0ygxs7tyme" path="res://backdrop.tscn" id="7_7ycvg"]
+[ext_resource type="Script" uid="uid://yuv0dtk7w2dq" path="res://scripts/car.gd" id="8_671wp"]
+[ext_resource type="Texture2D" uid="uid://bjpo66e0ueo5j" path="res://graphics/cars/car_1/body.png" id="9_42l1d"]
+[ext_resource type="Texture2D" uid="uid://doo855vfst8au" path="res://graphics/cars/car_1/extra.png" id="10_2jcla"]
+[ext_resource type="Theme" uid="uid://bk5d04iu41rhp" path="res://theme.tres" id="10_wr18j"]
+[ext_resource type="Script" uid="uid://c3oiltpqao4od" path="res://scripts/info_queue_button.gd" id="11_m35m6"]
+[ext_resource type="Texture2D" uid="uid://cg75gbbho43ut" path="res://graphics/spinner.png" id="11_qwutr"]
+[ext_resource type="Script" uid="uid://bh60v6cp737gm" path="res://scripts/opening_scene.gd" id="12_671wp"]
+[ext_resource type="Script" uid="uid://deugr1n12t31u" path="res://scripts/game.gd" id="13_mo76n"]
+[ext_resource type="AudioStream" uid="uid://sjrmmc8grn3u" path="res://audio/Rain07.ogg" id="15_2jcla"]
+[ext_resource type="Script" uid="uid://cd3ukb57w44xi" path="res://scripts/fade_sfx.gd" id="17_7th4q"]
+[ext_resource type="AudioStream" uid="uid://00b88pffubjq" path="res://audio/horn.ogg" id="17_u0ygc"]
+[ext_resource type="PackedScene" uid="uid://dmoywvjuvjat0" path="res://received_msg.tscn" id="19_6jybn"]
+[ext_resource type="Script" uid="uid://d28oxe04d22st" path="res://scripts/receive_queue.gd" id="20_84odl"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_o3jxj"]
+content_margin_left = 0.0
+content_margin_top = 0.0
+content_margin_right = 0.0
+content_margin_bottom = 0.0
+bg_color = Color(0.1375, 0.173125, 0.25, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.1045, 0.131575, 0.19, 1)
+border_blend = true
+corner_detail = 5
+
+[sub_resource type="LabelSettings" id="LabelSettings_nfk4m"]
+font_size = 30
+outline_size = 8
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="Resource" id="Resource_m35m6"]
+script = ExtResource("8_671wp")
+body_tex = ExtResource("9_42l1d")
+extra_tex = ExtResource("10_2jcla")
+weight = 1
+metadata/_custom_type_script = "uid://yuv0dtk7w2dq"
+
+[node name="Main Scene" type="PanelContainer" node_paths=PackedStringArray("main_menu", "text_scene", "game", "rain_sfx", "non_web_nodes")]
+texture_filter = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_o3jxj")
+script = ExtResource("1_qwutr")
+main_menu = NodePath("Menu (Home)")
+text_scene = NodePath("TextCutscene")
+game = NodePath("Game")
+rain_sfx = NodePath("RainSFX")
+non_web_nodes = [NodePath("Game/LeftPanel/VBoxContainer/VBoxContainer/PinWindow_Setting")]
+
+[node name="Background" parent="." instance=ExtResource("3_hq1ik")]
+layout_mode = 2
+
+[node name="Menu (Home)" type="MarginContainer" parent="." node_paths=PackedStringArray("menu_main", "menu_connect", "edit_ip", "edit_port", "edit_slot", "edit_pwd", "error_label")]
+visible = false
+layout_mode = 2
+script = ExtResource("1_7ycvg")
+menu_main = NodePath("Control/CenterContainer/MarginContainer/Menu_Main")
+menu_connect = NodePath("Control/CenterContainer/MarginContainer/Menu_Connect")
+edit_ip = NodePath("Control/CenterContainer/MarginContainer/Menu_Connect/ConnectBox/IP")
+edit_port = NodePath("Control/CenterContainer/MarginContainer/Menu_Connect/ConnectBox/Port")
+edit_slot = NodePath("Control/CenterContainer/MarginContainer/Menu_Connect/ConnectBox/Slot")
+edit_pwd = NodePath("Control/CenterContainer/MarginContainer/Menu_Connect/ConnectBox/Password")
+error_label = NodePath("Control/CenterContainer/MarginContainer/Menu_Connect/ConnectBox/VBoxContainer/Label")
+
+[node name="Control" type="Control" parent="Menu (Home)"]
+texture_filter = 2
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Menu (Home)/Control"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -94.0
+offset_top = 44.0
+offset_right = 94.0
+offset_bottom = 86.0
+grow_horizontal = 2
+text = "BK Simulator"
+label_settings = SubResource("LabelSettings_nfk4m")
+horizontal_alignment = 1
+
+[node name="CenterContainer" type="CenterContainer" parent="Menu (Home)/Control"]
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -385.0
+offset_top = -97.0
+offset_right = -89.0
+offset_bottom = 180.0
+grow_horizontal = 0
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="Menu (Home)/Control/CenterContainer"]
+layout_mode = 2
+
+[node name="Menu_Main" type="PanelContainer" parent="Menu (Home)/Control/CenterContainer/MarginContainer"]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 4
+theme_override_styles/panel = ExtResource("4_wr18j")
+
+[node name="ButtonBox" type="VBoxContainer" parent="Menu (Home)/Control/CenterContainer/MarginContainer/Menu_Main"]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 4
+
+[node name="Start" type="Button" parent="Menu (Home)/Control/CenterContainer/MarginContainer/Menu_Main/ButtonBox"]
+layout_mode = 2
+text = "Start Game"
+
+[node name="Settings" type="Button" parent="Menu (Home)/Control/CenterContainer/MarginContainer/Menu_Main/ButtonBox"]
+visible = false
+layout_mode = 2
+theme = ExtResource("10_wr18j")
+text = "Settings
+"
+
+[node name="Exit" type="Button" parent="Menu (Home)/Control/CenterContainer/MarginContainer/Menu_Main/ButtonBox"]
+layout_mode = 2
+text = "Exit"
+
+[node name="Menu_Connect" type="PanelContainer" parent="Menu (Home)/Control/CenterContainer/MarginContainer"]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 4
+theme_override_styles/panel = ExtResource("4_wr18j")
+
+[node name="ConnectBox" type="GridContainer" parent="Menu (Home)/Control/CenterContainer/MarginContainer/Menu_Connect"]
+layout_mode = 2
+columns = 2
+
+[node name="Label" type="Label" parent="Menu (Home)/Control/CenterContainer/MarginContainer/Menu_Connect/ConnectBox"]
+layout_mode = 2
+text = "IP:"
+horizontal_alignment = 2
+
+[node name="IP" type="LineEdit" parent="Menu (Home)/Control/CenterContainer/MarginContainer/Menu_Connect/ConnectBox"]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+placeholder_text = "archipelago.gg"
+
+[node name="Label2" type="Label" parent="Menu (Home)/Control/CenterContainer/MarginContainer/Menu_Connect/ConnectBox"]
+layout_mode = 2
+text = "Port:"
+horizontal_alignment = 2
+
+[node name="Port" type="LineEdit" parent="Menu (Home)/Control/CenterContainer/MarginContainer/Menu_Connect/ConnectBox"]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+placeholder_text = "38281"
+
+[node name="Label3" type="Label" parent="Menu (Home)/Control/CenterContainer/MarginContainer/Menu_Connect/ConnectBox"]
+layout_mode = 2
+text = "Slot:"
+horizontal_alignment = 2
+
+[node name="Slot" type="LineEdit" parent="Menu (Home)/Control/CenterContainer/MarginContainer/Menu_Connect/ConnectBox"]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+
+[node name="Label4" type="Label" parent="Menu (Home)/Control/CenterContainer/MarginContainer/Menu_Connect/ConnectBox"]
+layout_mode = 2
+text = "Passwd:"
+horizontal_alignment = 2
+
+[node name="Password" type="LineEdit" parent="Menu (Home)/Control/CenterContainer/MarginContainer/Menu_Connect/ConnectBox"]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+secret = true
+
+[node name="Control" type="Control" parent="Menu (Home)/Control/CenterContainer/MarginContainer/Menu_Connect/ConnectBox"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Menu (Home)/Control/CenterContainer/MarginContainer/Menu_Connect/ConnectBox"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Menu (Home)/Control/CenterContainer/MarginContainer/Menu_Connect/ConnectBox/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0, 0, 1)
+theme_override_constants/outline_size = 0
+theme_override_font_sizes/font_size = 10
+
+[node name="Connect" type="Button" parent="Menu (Home)/Control/CenterContainer/MarginContainer/Menu_Connect/ConnectBox/VBoxContainer"]
+layout_mode = 2
+text = "Connect"
+
+[node name="Back" type="Button" parent="Menu (Home)/Control/CenterContainer/MarginContainer/Menu_Connect/ConnectBox/VBoxContainer"]
+layout_mode = 2
+text = "Back"
+
+[node name="Game" type="Control" parent="." node_paths=PackedStringArray("runwalk_label", "speed_label", "rain_label", "snow_label", "distance_label", "sun_button", "rain_button", "snow_button", "buttons", "progress", "progress_label", "embark_label", "moving_backdrop", "message_queue", "stats", "text_scene", "settings_panel", "rain_sfx", "deathlink_checkbox")]
+texture_filter = 2
+layout_mode = 2
+script = ExtResource("13_mo76n")
+runwalk_label = NodePath("RightPanel/VBoxContainer/Stats/WalkRun")
+speed_label = NodePath("RightPanel/VBoxContainer/Stats/Speed")
+rain_label = NodePath("RightPanel/VBoxContainer/Stats/RainSpeed")
+snow_label = NodePath("RightPanel/VBoxContainer/Stats/SnowSpeed")
+distance_label = NodePath("RightPanel/VBoxContainer/Stats/Distance")
+sun_button = NodePath("Buttons/VBoxContainer/Sunny")
+rain_button = NodePath("Buttons/VBoxContainer/Rainy")
+snow_button = NodePath("Buttons/VBoxContainer/Snowy")
+buttons = NodePath("Buttons")
+progress = NodePath("Progress")
+progress_label = NodePath("Progress/HBoxContainer/Label2")
+embark_label = NodePath("Buttons/VBoxContainer/EmbarkLabel")
+moving_backdrop = NodePath("Backdrop")
+message_queue = NodePath("MessageQueue")
+stats = NodePath("RightPanel/VBoxContainer/Stats")
+text_scene = NodePath("../TextCutscene")
+settings_panel = NodePath("LeftPanel")
+rain_sfx = NodePath("../RainSFX")
+deathlink_checkbox = NodePath("LeftPanel/VBoxContainer/VBoxContainer/DeathLink_Setting/DeathLink")
+
+[node name="Backdrop" parent="Game" node_paths=PackedStringArray("killer_car_horn", "drifting_nodes") instance=ExtResource("7_7ycvg")]
+layout_mode = 1
+cars = Array[ExtResource("8_671wp")]([SubResource("Resource_m35m6")])
+killer_car_horn = NodePath("../../KillerCarHorn")
+drifting_nodes = {
+NodePath("MovingBackdrop/MovingSkyRain"): 20.0,
+NodePath("MovingBackdrop/MovingSkySnow"): 5.0
+}
+
+[node name="LeftPanel" type="MarginContainer" parent="Game"]
+layout_mode = 1
+offset_right = 40.0
+offset_bottom = 40.0
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 8
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Game/LeftPanel"]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Game/LeftPanel/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_constants/separation = 0
+
+[node name="PinWindow_Setting" type="HBoxContainer" parent="Game/LeftPanel/VBoxContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="PinWindow" type="CheckBox" parent="Game/LeftPanel/VBoxContainer/VBoxContainer/PinWindow_Setting"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Pin Window"
+
+[node name="InfoQueueButton" type="Button" parent="Game/LeftPanel/VBoxContainer/VBoxContainer/PinWindow_Setting"]
+layout_mode = 2
+text = " ? "
+script = ExtResource("11_m35m6")
+info_text = "If \"Pin Window\" is checked, the window will float above all other windows."
+metadata/_custom_type_script = "uid://c3oiltpqao4od"
+
+[node name="DeathLink_Setting" type="HBoxContainer" parent="Game/LeftPanel/VBoxContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="DeathLink" type="CheckBox" parent="Game/LeftPanel/VBoxContainer/VBoxContainer/DeathLink_Setting"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "DeathLink
+"
+
+[node name="InfoQueueButton" type="Button" parent="Game/LeftPanel/VBoxContainer/VBoxContainer/DeathLink_Setting"]
+layout_mode = 2
+text = " ? "
+script = ExtResource("11_m35m6")
+info_text = "If \"DeathLink\" is enabled, when a DeathLink message is received from the multiworld, you will be sent back Home if you are on a journey.
+DeathLinks will not be sent by BK Simulator, only received."
+metadata/_custom_type_script = "uid://c3oiltpqao4od"
+
+[node name="DieButton" type="Button" parent="Game/LeftPanel/VBoxContainer/VBoxContainer/DeathLink_Setting"]
+layout_mode = 2
+text = "X"
+
+[node name="SFX_Setting" type="VBoxContainer" parent="Game/LeftPanel/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="Label" type="Label" parent="Game/LeftPanel/VBoxContainer/SFX_Setting"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "SFX:"
+
+[node name="SFX_Slider" type="HSlider" parent="Game/LeftPanel/VBoxContainer/SFX_Setting"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+value = 50.0
+
+[node name="Environment_Setting" type="VBoxContainer" parent="Game/LeftPanel/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="Label" type="Label" parent="Game/LeftPanel/VBoxContainer/Environment_Setting"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Environment:"
+
+[node name="Environment_Slider" type="HSlider" parent="Game/LeftPanel/VBoxContainer/Environment_Setting"]
+layout_mode = 2
+size_flags_horizontal = 3
+value = 50.0
+
+[node name="StopDebug" type="Button" parent="Game/LeftPanel/VBoxContainer"]
+layout_mode = 2
+text = "Stop Debugging"
+
+[node name="RightPanel" type="MarginContainer" parent="Game"]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -104.0
+offset_bottom = 40.0
+grow_horizontal = 0
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 10
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Game/RightPanel"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Game/RightPanel/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 8
+
+[node name="ToggleSettings" type="Button" parent="Game/RightPanel/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+text = "Settings"
+
+[node name="ToggleStats" type="Button" parent="Game/RightPanel/VBoxContainer/HBoxContainer"]
+texture_filter = 2
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+toggle_mode = true
+text = "Stats"
+
+[node name="BackToMenu" type="Button" parent="Game/RightPanel/VBoxContainer/HBoxContainer"]
+texture_filter = 2
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = " Exit "
+
+[node name="Stats" type="GridContainer" parent="Game/RightPanel/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 8
+columns = 2
+
+[node name="WalkRun" type="Label" parent="Game/RightPanel/VBoxContainer/Stats"]
+layout_mode = 2
+text = "Run Speed:"
+horizontal_alignment = 2
+
+[node name="Speed" type="Label" parent="Game/RightPanel/VBoxContainer/Stats"]
+layout_mode = 2
+text = "100.0"
+
+[node name="Label" type="Label" parent="Game/RightPanel/VBoxContainer/Stats"]
+layout_mode = 2
+text = "Rain Speed:"
+horizontal_alignment = 2
+
+[node name="RainSpeed" type="Label" parent="Game/RightPanel/VBoxContainer/Stats"]
+layout_mode = 2
+text = "100.0"
+
+[node name="Label2" type="Label" parent="Game/RightPanel/VBoxContainer/Stats"]
+layout_mode = 2
+text = "Snow Speed:"
+horizontal_alignment = 2
+
+[node name="SnowSpeed" type="Label" parent="Game/RightPanel/VBoxContainer/Stats"]
+layout_mode = 2
+text = "100.0"
+
+[node name="Label3" type="Label" parent="Game/RightPanel/VBoxContainer/Stats"]
+layout_mode = 2
+text = "Distance:"
+horizontal_alignment = 2
+
+[node name="Distance" type="Label" parent="Game/RightPanel/VBoxContainer/Stats"]
+layout_mode = 2
+text = "5000"
+
+[node name="Buttons" type="MarginContainer" parent="Game"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -20.0
+offset_right = 20.0
+offset_bottom = 40.0
+grow_horizontal = 2
+theme_override_constants/margin_top = 8
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Game/Buttons"]
+layout_mode = 2
+
+[node name="EmbarkLabel" type="Label" parent="Game/Buttons/VBoxContainer"]
+layout_mode = 2
+text = "Embark:"
+horizontal_alignment = 1
+
+[node name="Sunny" type="Button" parent="Game/Buttons/VBoxContainer"]
+layout_mode = 2
+text = "Sunny Weather"
+
+[node name="Rainy" type="Button" parent="Game/Buttons/VBoxContainer"]
+layout_mode = 2
+text = "Rainy Weather"
+
+[node name="Snowy" type="Button" parent="Game/Buttons/VBoxContainer"]
+layout_mode = 2
+text = "Snowy Weather"
+
+[node name="Progress" type="MarginContainer" parent="Game"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -40.5
+offset_right = 40.5
+offset_bottom = 23.0
+grow_horizontal = 2
+theme_override_constants/margin_top = 8
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Game/Progress"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Game/Progress/HBoxContainer"]
+layout_mode = 2
+text = "Position:"
+horizontal_alignment = 1
+
+[node name="Label2" type="Label" parent="Game/Progress/HBoxContainer"]
+layout_mode = 2
+text = "0"
+horizontal_alignment = 1
+
+[node name="MessageQueue" type="Control" parent="Game" node_paths=PackedStringArray("queue_vbox", "notifier") groups=["MessageQueues"]]
+clip_contents = true
+custom_minimum_size = Vector2(640, 200)
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 0
+script = ExtResource("20_84odl")
+queue_vbox = NodePath("MarginContainer/QueueVBox")
+message_scene = ExtResource("19_6jybn")
+notifier = NodePath("VisibleOnScreenNotifier2D")
+
+[node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="Game/MessageQueue"]
+position = Vector2(0, -160)
+
+[node name="MarginContainer" type="MarginContainer" parent="Game/MessageQueue"]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -16.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="QueueVBox" type="VBoxContainer" parent="Game/MessageQueue/MarginContainer"]
+layout_mode = 2
+size_flags_vertical = 8
+
+[node name="TextCutscene" type="Control" parent="." node_paths=PackedStringArray("lbl", "spinner")]
+visible = false
+layout_mode = 2
+mouse_filter = 2
+script = ExtResource("12_671wp")
+lbl = NodePath("PanelContainer/Label")
+spinner = NodePath("Spinner")
+
+[node name="PanelContainer" type="PanelContainer" parent="TextCutscene"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -112.0
+offset_top = -24.5
+offset_right = 112.0
+offset_bottom = 24.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = ExtResource("4_wr18j")
+
+[node name="Label" type="Label" parent="TextCutscene/PanelContainer"]
+layout_mode = 2
+horizontal_alignment = 1
+
+[node name="Spinner" type="Sprite2D" parent="TextCutscene"]
+position = Vector2(320, 229)
+scale = Vector2(0.33, 0.33)
+texture = ExtResource("11_qwutr")
+hframes = 8
+vframes = 2
+
+[node name="RainSFX" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("15_2jcla")
+bus = &"Environment"
+script = ExtResource("17_7th4q")
+metadata/_custom_type_script = "uid://cd3ukb57w44xi"
+
+[node name="KillerCarHorn" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("17_u0ygc")
+bus = &"SFX"
+script = ExtResource("17_7th4q")
+metadata/_custom_type_script = "uid://cd3ukb57w44xi"
+
+[connection signal="debug_mode" from="." to="Game/LeftPanel/VBoxContainer/VBoxContainer/DeathLink_Setting/DieButton" method="set_visible"]
+[connection signal="debug_mode" from="." to="Game/LeftPanel/VBoxContainer/StopDebug" method="set_visible"]
+[connection signal="pressed" from="Menu (Home)/Control/CenterContainer/MarginContainer/Menu_Main/ButtonBox/Start" to="Menu (Home)" method="_on_start_pressed"]
+[connection signal="pressed" from="Menu (Home)/Control/CenterContainer/MarginContainer/Menu_Main/ButtonBox/Exit" to="Menu (Home)" method="_on_exit_pressed"]
+[connection signal="text_submitted" from="Menu (Home)/Control/CenterContainer/MarginContainer/Menu_Connect/ConnectBox/IP" to="Menu (Home)" method="_on_connect_pressed" unbinds=1]
+[connection signal="text_submitted" from="Menu (Home)/Control/CenterContainer/MarginContainer/Menu_Connect/ConnectBox/Port" to="Menu (Home)" method="_on_connect_pressed" unbinds=1]
+[connection signal="text_submitted" from="Menu (Home)/Control/CenterContainer/MarginContainer/Menu_Connect/ConnectBox/Slot" to="Menu (Home)" method="_on_connect_pressed" unbinds=1]
+[connection signal="text_submitted" from="Menu (Home)/Control/CenterContainer/MarginContainer/Menu_Connect/ConnectBox/Password" to="Menu (Home)" method="_on_connect_pressed" unbinds=1]
+[connection signal="pressed" from="Menu (Home)/Control/CenterContainer/MarginContainer/Menu_Connect/ConnectBox/VBoxContainer/Connect" to="Menu (Home)" method="_on_connect_pressed"]
+[connection signal="pressed" from="Menu (Home)/Control/CenterContainer/MarginContainer/Menu_Connect/ConnectBox/VBoxContainer/Back" to="Menu (Home)" method="_on_back_pressed"]
+[connection signal="open_game" from="Game" to="." method="fade_to_game"]
+[connection signal="play_opening" from="Game" to="." method="fade_to_opening"]
+[connection signal="return_to_menu" from="Game" to="." method="_on_back_to_menu_pressed"]
+[connection signal="toggled" from="Game/LeftPanel/VBoxContainer/VBoxContainer/PinWindow_Setting/PinWindow" to="Game" method="_on_pin_window_toggled"]
+[connection signal="toggled" from="Game/LeftPanel/VBoxContainer/VBoxContainer/DeathLink_Setting/DeathLink" to="Game" method="set_deathlink"]
+[connection signal="pressed" from="Game/LeftPanel/VBoxContainer/VBoxContainer/DeathLink_Setting/DieButton" to="." method="_debug_die"]
+[connection signal="value_changed" from="Game/LeftPanel/VBoxContainer/SFX_Setting/SFX_Slider" to="." method="_on_sfx_slider_value_changed"]
+[connection signal="value_changed" from="Game/LeftPanel/VBoxContainer/Environment_Setting/Environment_Slider" to="." method="_on_environment_slider_value_changed"]
+[connection signal="pressed" from="Game/LeftPanel/VBoxContainer/StopDebug" to="." method="_on_stop_debug_pressed"]
+[connection signal="pressed" from="Game/RightPanel/VBoxContainer/HBoxContainer/ToggleSettings" to="Game" method="_on_toggle_settings_pressed"]
+[connection signal="pressed" from="Game/RightPanel/VBoxContainer/HBoxContainer/ToggleStats" to="Game" method="_on_toggle_stats_pressed"]
+[connection signal="pressed" from="Game/RightPanel/VBoxContainer/HBoxContainer/BackToMenu" to="Game" method="_on_back_to_menu_pressed"]
+[connection signal="gui_input" from="TextCutscene/PanelContainer" to="TextCutscene" method="_on_panel_container_gui_input"]
