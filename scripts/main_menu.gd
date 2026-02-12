@@ -35,14 +35,15 @@ func _on_back_pressed() -> void:
 	active_menu = menu_main
 
 func _on_connect_pressed() -> void:
-	if error_label.text:
-		error_label.text = "..."
+	error_label.add_theme_color_override(&"font_color", Color.WHITE)
+	error_label.text = "...Connecting..."
 	var ip: String = edit_ip.placeholder_text if edit_ip.text.is_empty() else edit_ip.text
 	var port: String = edit_port.placeholder_text if edit_port.text.is_empty() else edit_port.text
 	Archipelago.ap_connect(ip, port, edit_slot.text, edit_pwd.text)
 
 func connect_refused(_conn: ConnectionInfo, json: Dictionary) -> void:
 	var error: String = ", ".join(json["errors"])
+	error_label.add_theme_color_override(&"font_color", Color.RED)
 	error_label.text = error
 
 func connected(_conn: ConnectionInfo, _json: Dictionary) -> void:
