@@ -22,6 +22,7 @@ const end_names: Array[String] = ["EmilyV"]
 @export var settings_panel: MarginContainer
 @export var rain_sfx: FadeSFXPlayer
 @export var deathlink_checkbox: CheckBox
+@export var deathlink_group_edit: LineEdit
 @export_group("")
 
 signal return_to_menu
@@ -85,6 +86,11 @@ func get_deathlink() -> bool:
 func set_deathlink(val: bool) -> void:
 	Archipelago.set_deathlink(val)
 	deathlink_checkbox.set_pressed_no_signal(val)
+func get_deathlink_group() -> String:
+	return Archipelago.get_deathlink_group()
+func set_deathlink_group(group: String) -> void:
+	deathlink_group_edit.text = group
+	Archipelago.set_deathlink_group(group)
 
 func set_paused(val: bool) -> void:
 	paused = val
@@ -101,6 +107,7 @@ func load_slot_data(conn: ConnectionInfo) -> void:
 	locs_per_weather = conn.slot_data["LocsPerWeather"]
 	bk_start_miles = conn.slot_data["StartDistance"]
 	speed_per_upgrade = conn.slot_data["SpeedPerUpgrade"]
+	set_deathlink_group(conn.slot_data.get("DeathLinkGroup", ""))
 	set_deathlink(conn.slot_data.get("DeathLink", false))
 
 func refresh() -> void:
@@ -223,6 +230,8 @@ func resume_from_server(data: Variant) -> void:
 					set_state(State.HOME)
 		if data.has("deathlink"):
 			set_deathlink(data["deathlink"])
+		if data.has("deathlink_group"):
+			set_deathlink_group(data["deathlink_group"])
 		init_backdrop(true)
 		if current_state == State.HOME and remaining_locations > 0:
 			play_opening.emit()
@@ -241,6 +250,7 @@ func save_to_server() -> void:
 				"weather": current_weather as int,
 				"state": post_cutscene_state,
 				"deathlink": get_deathlink(),
+				"deathlink_group": get_deathlink_group(),
 			}}
 		]
 	})

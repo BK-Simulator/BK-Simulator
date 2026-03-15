@@ -58,7 +58,7 @@ main_menu = NodePath("Menu (Home)")
 text_scene = NodePath("TextCutscene")
 game = NodePath("Game")
 rain_sfx = NodePath("RainSFX")
-non_web_nodes = [NodePath("Game/LeftPanel/VBoxContainer/VBoxContainer/PinWindow_Setting")]
+non_web_nodes = [NodePath("Game/LeftPanel/VBoxContainer/PinWindow_Setting")]
 
 [node name="Background" parent="." instance=ExtResource("3_hq1ik")]
 layout_mode = 2
@@ -205,7 +205,7 @@ text = "Connect"
 layout_mode = 2
 text = "Back"
 
-[node name="Game" type="Control" parent="." node_paths=PackedStringArray("runwalk_label", "speed_label", "rain_label", "snow_label", "distance_label", "sun_button", "rain_button", "snow_button", "buttons", "progress", "progress_label", "embark_label", "moving_backdrop", "message_queue", "stats", "text_scene", "settings_panel", "rain_sfx", "deathlink_checkbox")]
+[node name="Game" type="Control" parent="." node_paths=PackedStringArray("runwalk_label", "speed_label", "rain_label", "snow_label", "distance_label", "sun_button", "rain_button", "snow_button", "buttons", "progress", "progress_label", "embark_label", "moving_backdrop", "message_queue", "stats", "text_scene", "settings_panel", "rain_sfx", "deathlink_checkbox", "deathlink_group_edit")]
 texture_filter = 2
 layout_mode = 2
 script = ExtResource("13_mo76n")
@@ -227,7 +227,8 @@ stats = NodePath("RightPanel/VBoxContainer/Stats")
 text_scene = NodePath("../TextCutscene")
 settings_panel = NodePath("LeftPanel")
 rain_sfx = NodePath("../RainSFX")
-deathlink_checkbox = NodePath("LeftPanel/VBoxContainer/VBoxContainer/DeathLink_Setting/DeathLink")
+deathlink_checkbox = NodePath("LeftPanel/VBoxContainer/DeathLink_Setting/DeathLink")
+deathlink_group_edit = NodePath("LeftPanel/VBoxContainer/DeathLink_Setting/HBoxContainer/DeathLinkGroup")
 
 [node name="Backdrop" parent="Game" node_paths=PackedStringArray("killer_car_horn", "drifting_nodes") instance=ExtResource("7_7ycvg")]
 layout_mode = 1
@@ -238,6 +239,42 @@ NodePath("MovingBackdrop/MovingSkyRain"): 20.0,
 NodePath("MovingBackdrop/MovingSkySnow"): 5.0
 }
 
+[node name="MessageQueue" type="Control" parent="Game" node_paths=PackedStringArray("queue_vbox", "notifier") groups=["MessageQueues"]]
+clip_contents = true
+custom_minimum_size = Vector2(640, 200)
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -200.0
+grow_horizontal = 2
+grow_vertical = 0
+script = ExtResource("20_84odl")
+queue_vbox = NodePath("MarginContainer/QueueVBox")
+message_scene = ExtResource("19_6jybn")
+notifier = NodePath("VisibleOnScreenNotifier2D")
+
+[node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="Game/MessageQueue"]
+position = Vector2(0, -160)
+
+[node name="MarginContainer" type="MarginContainer" parent="Game/MessageQueue"]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -16.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="QueueVBox" type="VBoxContainer" parent="Game/MessageQueue/MarginContainer"]
+layout_mode = 2
+size_flags_vertical = 8
+
 [node name="LeftPanel" type="MarginContainer" parent="Game"]
 layout_mode = 1
 offset_right = 40.0
@@ -247,40 +284,37 @@ theme_override_constants/margin_top = 8
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Game/LeftPanel"]
 layout_mode = 2
-theme_override_constants/separation = 0
+theme_override_constants/separation = 4
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Game/LeftPanel/VBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 0
-theme_override_constants/separation = 0
-
-[node name="PinWindow_Setting" type="HBoxContainer" parent="Game/LeftPanel/VBoxContainer/VBoxContainer"]
+[node name="PinWindow_Setting" type="HBoxContainer" parent="Game/LeftPanel/VBoxContainer"]
 layout_mode = 2
 theme_override_constants/separation = 0
 
-[node name="PinWindow" type="CheckBox" parent="Game/LeftPanel/VBoxContainer/VBoxContainer/PinWindow_Setting"]
+[node name="PinWindow" type="CheckBox" parent="Game/LeftPanel/VBoxContainer/PinWindow_Setting"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Pin Window"
 
-[node name="InfoQueueButton" type="Button" parent="Game/LeftPanel/VBoxContainer/VBoxContainer/PinWindow_Setting"]
+[node name="InfoQueueButton" type="Button" parent="Game/LeftPanel/VBoxContainer/PinWindow_Setting"]
 layout_mode = 2
 text = " ? "
 script = ExtResource("11_m35m6")
 info_text = "If \"Pin Window\" is checked, the window will float above all other windows."
 metadata/_custom_type_script = "uid://c3oiltpqao4od"
 
-[node name="DeathLink_Setting" type="HBoxContainer" parent="Game/LeftPanel/VBoxContainer/VBoxContainer"]
+[node name="DeathLink_Setting" type="GridContainer" parent="Game/LeftPanel/VBoxContainer"]
 layout_mode = 2
-theme_override_constants/separation = 0
+theme_override_constants/h_separation = 0
+theme_override_constants/v_separation = 0
+columns = 2
 
-[node name="DeathLink" type="CheckBox" parent="Game/LeftPanel/VBoxContainer/VBoxContainer/DeathLink_Setting"]
+[node name="DeathLink" type="CheckBox" parent="Game/LeftPanel/VBoxContainer/DeathLink_Setting"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "DeathLink
 "
 
-[node name="InfoQueueButton" type="Button" parent="Game/LeftPanel/VBoxContainer/VBoxContainer/DeathLink_Setting"]
+[node name="InfoQueueButton" type="Button" parent="Game/LeftPanel/VBoxContainer/DeathLink_Setting"]
 layout_mode = 2
 text = " ? "
 script = ExtResource("11_m35m6")
@@ -288,9 +322,27 @@ info_text = "If \"DeathLink\" is enabled, when a DeathLink message is received f
 DeathLinks will not be sent by BK Simulator, only received."
 metadata/_custom_type_script = "uid://c3oiltpqao4od"
 
-[node name="DieButton" type="Button" parent="Game/LeftPanel/VBoxContainer/VBoxContainer/DeathLink_Setting"]
+[node name="HBoxContainer" type="HBoxContainer" parent="Game/LeftPanel/VBoxContainer/DeathLink_Setting"]
 layout_mode = 2
-text = "X"
+theme_override_constants/separation = 1
+
+[node name="Label" type="Label" parent="Game/LeftPanel/VBoxContainer/DeathLink_Setting/HBoxContainer"]
+layout_mode = 2
+text = "Group:"
+
+[node name="DeathLinkGroup" type="LineEdit" parent="Game/LeftPanel/VBoxContainer/DeathLink_Setting/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/minimum_character_width = 9
+
+[node name="InfoQueueButton2" type="Button" parent="Game/LeftPanel/VBoxContainer/DeathLink_Setting"]
+layout_mode = 2
+text = " ? "
+script = ExtResource("11_m35m6")
+info_text = "DeathLinks will only be received from clients whose 'DeathLink Group' matches this string.
+
+An empty string matches clients that do not support groups."
+metadata/_custom_type_script = "uid://c3oiltpqao4od"
 
 [node name="SFX_Setting" type="VBoxContainer" parent="Game/LeftPanel/VBoxContainer"]
 layout_mode = 2
@@ -321,8 +373,17 @@ layout_mode = 2
 size_flags_horizontal = 3
 value = 50.0
 
-[node name="StopDebug" type="Button" parent="Game/LeftPanel/VBoxContainer"]
+[node name="DebugStuff" type="HBoxContainer" parent="Game/LeftPanel/VBoxContainer"]
 layout_mode = 2
+
+[node name="DieButton" type="Button" parent="Game/LeftPanel/VBoxContainer/DebugStuff"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Die"
+
+[node name="StopDebug" type="Button" parent="Game/LeftPanel/VBoxContainer/DebugStuff"]
+layout_mode = 2
+size_flags_horizontal = 3
 text = "Stop Debugging"
 
 [node name="RightPanel" type="MarginContainer" parent="Game"]
@@ -457,41 +518,6 @@ layout_mode = 2
 text = "0"
 horizontal_alignment = 1
 
-[node name="MessageQueue" type="Control" parent="Game" node_paths=PackedStringArray("queue_vbox", "notifier") groups=["MessageQueues"]]
-clip_contents = true
-custom_minimum_size = Vector2(640, 200)
-layout_mode = 1
-anchors_preset = 12
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 0
-script = ExtResource("20_84odl")
-queue_vbox = NodePath("MarginContainer/QueueVBox")
-message_scene = ExtResource("19_6jybn")
-notifier = NodePath("VisibleOnScreenNotifier2D")
-
-[node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="Game/MessageQueue"]
-position = Vector2(0, -160)
-
-[node name="MarginContainer" type="MarginContainer" parent="Game/MessageQueue"]
-layout_mode = 1
-anchors_preset = 12
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_top = -16.0
-grow_horizontal = 2
-grow_vertical = 0
-theme_override_constants/margin_left = 16
-theme_override_constants/margin_right = 16
-theme_override_constants/margin_bottom = 16
-
-[node name="QueueVBox" type="VBoxContainer" parent="Game/MessageQueue/MarginContainer"]
-layout_mode = 2
-size_flags_vertical = 8
-
 [node name="TextCutscene" type="Control" parent="." node_paths=PackedStringArray("lbl", "spinner")]
 visible = false
 layout_mode = 2
@@ -538,8 +564,7 @@ bus = &"SFX"
 script = ExtResource("17_7th4q")
 metadata/_custom_type_script = "uid://cd3ukb57w44xi"
 
-[connection signal="debug_mode" from="." to="Game/LeftPanel/VBoxContainer/VBoxContainer/DeathLink_Setting/DieButton" method="set_visible"]
-[connection signal="debug_mode" from="." to="Game/LeftPanel/VBoxContainer/StopDebug" method="set_visible"]
+[connection signal="debug_mode" from="." to="Game/LeftPanel/VBoxContainer/DebugStuff" method="set_visible"]
 [connection signal="pressed" from="Menu (Home)/Control/CenterContainer/MarginContainer/Menu_Main/ButtonBox/Start" to="Menu (Home)" method="_on_start_pressed"]
 [connection signal="pressed" from="Menu (Home)/Control/CenterContainer/MarginContainer/Menu_Main/ButtonBox/Exit" to="Menu (Home)" method="_on_exit_pressed"]
 [connection signal="text_submitted" from="Menu (Home)/Control/CenterContainer/MarginContainer/Menu_Connect/ConnectBox/IP" to="Menu (Home)" method="_on_connect_pressed" unbinds=1]
@@ -551,12 +576,13 @@ metadata/_custom_type_script = "uid://cd3ukb57w44xi"
 [connection signal="open_game" from="Game" to="." method="fade_to_game"]
 [connection signal="play_opening" from="Game" to="." method="fade_to_opening"]
 [connection signal="return_to_menu" from="Game" to="." method="_on_back_to_menu_pressed"]
-[connection signal="toggled" from="Game/LeftPanel/VBoxContainer/VBoxContainer/PinWindow_Setting/PinWindow" to="Game" method="_on_pin_window_toggled"]
-[connection signal="toggled" from="Game/LeftPanel/VBoxContainer/VBoxContainer/DeathLink_Setting/DeathLink" to="Game" method="set_deathlink"]
-[connection signal="pressed" from="Game/LeftPanel/VBoxContainer/VBoxContainer/DeathLink_Setting/DieButton" to="." method="_debug_die"]
+[connection signal="toggled" from="Game/LeftPanel/VBoxContainer/PinWindow_Setting/PinWindow" to="Game" method="_on_pin_window_toggled"]
+[connection signal="toggled" from="Game/LeftPanel/VBoxContainer/DeathLink_Setting/DeathLink" to="Game" method="set_deathlink"]
+[connection signal="text_submitted" from="Game/LeftPanel/VBoxContainer/DeathLink_Setting/HBoxContainer/DeathLinkGroup" to="Game" method="set_deathlink_group"]
 [connection signal="value_changed" from="Game/LeftPanel/VBoxContainer/SFX_Setting/SFX_Slider" to="." method="_on_sfx_slider_value_changed"]
 [connection signal="value_changed" from="Game/LeftPanel/VBoxContainer/Environment_Setting/Environment_Slider" to="." method="_on_environment_slider_value_changed"]
-[connection signal="pressed" from="Game/LeftPanel/VBoxContainer/StopDebug" to="." method="_on_stop_debug_pressed"]
+[connection signal="pressed" from="Game/LeftPanel/VBoxContainer/DebugStuff/DieButton" to="." method="_debug_die"]
+[connection signal="pressed" from="Game/LeftPanel/VBoxContainer/DebugStuff/StopDebug" to="." method="_on_stop_debug_pressed"]
 [connection signal="pressed" from="Game/RightPanel/VBoxContainer/HBoxContainer/ToggleSettings" to="Game" method="_on_toggle_settings_pressed"]
 [connection signal="pressed" from="Game/RightPanel/VBoxContainer/HBoxContainer/ToggleStats" to="Game" method="_on_toggle_stats_pressed"]
 [connection signal="pressed" from="Game/RightPanel/VBoxContainer/HBoxContainer/BackToMenu" to="Game" method="_on_back_to_menu_pressed"]
