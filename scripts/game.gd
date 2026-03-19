@@ -26,6 +26,7 @@ const end_names: Array[String] = ["EmilyV"]
 @export_group("")
 
 signal return_to_menu
+signal unintentional_disconnect
 signal play_opening
 signal open_game
 
@@ -75,6 +76,7 @@ var in_focus: bool = false
 var paused: bool = true : set = set_paused
 var goaled: bool = false
 var weather_changed := false
+var expecting_disconnect := true
 
 # DeathLink data
 var dying_source: String
@@ -184,9 +186,14 @@ func on_connect(conn: ConnectionInfo, _json: Dictionary) -> void:
 	conn.retrieve("_read_client_status_%d_%d" % [conn.team_id, conn.player_id], check_status)
 	in_focus = get_window().has_focus()
 	paused = false
+	expecting_disconnect = false
 
 func on_disconnect() -> void:
 	message_queue.clear()
+	if expecting_disconnect:
+		return
+	unintentional_disconnect.emit()
+	expecting_disconnect = true
 
 func item_get(item: NetworkItem) -> void:
 	var iname: String = item.get_name()
@@ -211,6 +218,7 @@ func item_refr(items: Array[NetworkItem]) -> void:
 func _exit_tree() -> void:
 	if Archipelago.is_ap_connected():
 		save_to_server()
+		expecting_disconnect = true
 
 func resume_from_server(data: Variant) -> void:
 	if data == null:
@@ -469,6 +477,7 @@ func pick_username() -> String:
 
 func _on_back_to_menu_pressed() -> void:
 	save_to_server()
+	expecting_disconnect = true
 	return_to_menu.emit()
 	paused = true
 

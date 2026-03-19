@@ -2,7 +2,7 @@ extends PanelContainer
 
 signal debug_mode(val: bool)
 
-@export var main_menu: Container
+@export var main_menu: MainMenu
 @export var text_scene: TextScene
 @export var game: BKSim_Game
 @export var rain_sfx: FadeSFXPlayer
@@ -83,6 +83,11 @@ func _on_back_to_menu_pressed() -> void:
 	randomize_wallpaper()
 	await fade_to_menu()
 	Archipelago.ap_disconnect()
+
+func _on_accidental_disconnect() -> void:
+	randomize_wallpaper()
+	main_menu.show_error("...Reconnecting...")
+	await fade_to_menu()
 
 var sfx_vol := 50.0
 var environment_vol := 50.0

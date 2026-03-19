@@ -576,6 +576,7 @@ metadata/_custom_type_script = "uid://cd3ukb57w44xi"
 [connection signal="open_game" from="Game" to="." method="fade_to_game"]
 [connection signal="play_opening" from="Game" to="." method="fade_to_opening"]
 [connection signal="return_to_menu" from="Game" to="." method="_on_back_to_menu_pressed"]
+[connection signal="unintentional_disconnect" from="Game" to="." method="_on_accidental_disconnect"]
 [connection signal="toggled" from="Game/LeftPanel/VBoxContainer/PinWindow_Setting/PinWindow" to="Game" method="_on_pin_window_toggled"]
 [connection signal="toggled" from="Game/LeftPanel/VBoxContainer/DeathLink_Setting/DeathLink" to="Game" method="set_deathlink"]
 [connection signal="text_submitted" from="Game/LeftPanel/VBoxContainer/DeathLink_Setting/HBoxContainer/DeathLinkGroup" to="Game" method="set_deathlink_group"]
