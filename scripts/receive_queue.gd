@@ -9,6 +9,12 @@ func _ready() -> void:
 	notifier.screen_entered.connect(queue_refresh)
 	notifier.screen_exited.connect(queue_refresh)
 
+func clear() -> void:
+	for child in queue_vbox.get_children():
+		if child is TimedMessage:
+			child.queue_free()
+	queue_refresh()
+
 func queue_refresh() -> void:
 	dirty = true
 

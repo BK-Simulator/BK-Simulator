@@ -103,6 +103,7 @@ func reset_item() -> void:
 	bk_position = bk_start_miles * MILES
 	snow_button.disabled = true
 	snow_button.focus_mode = FOCUS_NONE
+
 func load_slot_data(conn: ConnectionInfo) -> void:
 	locs_per_weather = conn.slot_data["LocsPerWeather"]
 	bk_start_miles = conn.slot_data["StartDistance"]
@@ -152,6 +153,7 @@ func _ready() -> void:
 	stats.visible = false
 	settings_panel.visible = false
 	Archipelago.connected.connect(on_connect)
+	Archipelago.disconnected.connect(on_disconnect)
 	Archipelago.remove_location.connect(refr_locs.unbind(1))
 	Archipelago.printjson.connect(printjson)
 	sun_button.pressed.connect(_on_embark.bind(Weather.SUN))
@@ -182,6 +184,9 @@ func on_connect(conn: ConnectionInfo, _json: Dictionary) -> void:
 	conn.retrieve("_read_client_status_%d_%d" % [conn.team_id, conn.player_id], check_status)
 	in_focus = get_window().has_focus()
 	paused = false
+
+func on_disconnect() -> void:
+	message_queue.clear()
 
 func item_get(item: NetworkItem) -> void:
 	var iname: String = item.get_name()
