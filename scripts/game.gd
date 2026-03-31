@@ -178,7 +178,7 @@ func on_connect(conn: ConnectionInfo, _json: Dictionary) -> void:
 	current_position = 0
 	autosave_timer = 60.0
 	current_weather = Weather.NONE
-	connected_key = "BK_Simulator_%d" % conn.player_id
+	connected_key = "BK_Simulator_%d_%d" % [conn.team_id, conn.player_id]
 	conn.retrieve(connected_key, resume_from_server)
 	conn.force_scout_all()
 	refresh()
